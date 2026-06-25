@@ -3,7 +3,14 @@ import axios from "axios";
 import { mergeTempCartWithServer } from "../shop/cart-slice";
 
 // Configure axios defaults
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getBackendUrl = () => {
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:5000';
+  }
+  return import.meta.env.VITE_API_URL || 'https://roshjewellery.onrender.com';
+};
+axios.defaults.baseURL = getBackendUrl();
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Accept'] = 'application/json';
 axios.defaults.headers.common['Content-Type'] = 'application/json';

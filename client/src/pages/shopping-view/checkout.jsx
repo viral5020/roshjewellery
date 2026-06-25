@@ -939,7 +939,7 @@ function ShoppingCheckout() {
       }
 
       // Create order
-      const orderResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders`, {
+      const orderResponse = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -968,7 +968,7 @@ function ShoppingCheckout() {
       // Send confirmation email for COD orders
       if (formData.paymentMethod === 'cod') {
         try {
-          const emailResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/send-order-confirmation`, {
+          const emailResponse = await fetch('/api/send-order-confirmation', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

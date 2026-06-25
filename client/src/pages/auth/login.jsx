@@ -14,7 +14,14 @@ const initialState = {
 };
 
 const loginwithgoogle = () => {
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getBackendUrl = () => {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000';
+    }
+    return import.meta.env.VITE_API_URL || 'https://roshjewellery.onrender.com';
+  };
+  const baseUrl = getBackendUrl();
   window.open(`${baseUrl}/auth/google`, "_self");
 };
 
