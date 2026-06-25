@@ -1,0 +1,42 @@
+/* Make sure the body takes the full height of the screen */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Container that centers everything */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 100% of the viewport height */
+  }
+  
+  .login-with-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 240px; /* Adjust the width of the button */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-with-google-btn:hover {
+    background-color: #000308;
+  }
+  
+  .google-logo {
+    width: 16px; /* Adjust image size */
+    height: 16px; /* Adjust image size */
+    margin-right: 10px; /* Space between logo and text */
+  }
+  
