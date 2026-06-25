@@ -14,7 +14,8 @@ const initialState = {
 };
 
 const loginwithgoogle = () => {
-  window.open("http://localhost:5000/auth/google", "_self");
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  window.open(`${baseUrl}/auth/google`, "_self");
 };
 
 function AuthLogin() {

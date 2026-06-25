@@ -78,14 +78,18 @@ const loginUser = async (req, res) => {
     );
 
     // Set cookie directly in headers
-    const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
+    const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+    const sameSite = isProd ? 'None' : 'Lax';
+    const secure = isProd ? '; Secure' : '';
+    const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}${secure}`;
     res.setHeader('Set-Cookie', cookieValue);
     
     console.log('Setting cookie header:', cookieValue);
 
     // Set additional CORS headers
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Origin', frontendUrl);
 
     // Log all response headers
     console.log('Response headers:', {
@@ -115,7 +119,12 @@ const loginUser = async (req, res) => {
 
 // Logout user
 const logoutUser = (req, res) => {
-  res.clearCookie("token").json({
+  const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+  res.clearCookie("token", {
+    path: "/",
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax'
+  }).json({
     success: true,
     message: "Logged out successfully!",
   });
@@ -236,7 +245,8 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send the reset password email with the token as part of the URL
-    const resetLink = `http://localhost:5173/auth/resetpassword?token=${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetLink = `${frontendUrl}/auth/resetpassword?token=${resetToken}`;
 
     await transporter.sendMail({
       from: "viralajudia123@gmail.com",

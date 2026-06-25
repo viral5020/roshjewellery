@@ -69,13 +69,25 @@ mongoose.connect(process.env.MONGODB_URI)
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+
+// Trust proxy for secure cookies on Render
+if (isProd) {
+  app.set('trust proxy', 1);
+}
+
 // Configure CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://roshjewellery-1.onrender.com"
+];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://roshjewellery-1.onrender.com"
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -110,8 +122,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false,
-        sameSite: 'lax',
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
         path: '/',
         maxAge: 24 * 60 * 60 * 1000
     }
@@ -125,7 +137,7 @@ passport.use(
     new OAuth2Strategy({
         clientID: clientid,
         clientSecret: clientsecret,
-        callbackURL: "http://localhost:5000/auth/google/callback",
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || (process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/auth/google/callback` : "http://localhost:5000/auth/google/callback"),
         scope: ["profile", "email"]
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -176,13 +188,14 @@ app.get('/auth/google',
 app.get('/auth/google/callback', (req, res, next) => {
     console.log('Google callback received');
     passport.authenticate('google', { session: false }, (err, user, info) => {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         if (err) {
             console.error('Google callback error:', err);
-            return res.redirect('http://localhost:5173/auth/login?error=oauth_failed');
+            return res.redirect(`${frontendUrl}/auth/login?error=oauth_failed`);
         }
         if (!user) {
             console.log('No user returned from Google auth');
-            return res.redirect('http://localhost:5173/auth/login?error=user_not_found');
+            return res.redirect(`${frontendUrl}/auth/login?error=user_not_found`);
         }
         
         console.log('Google auth successful, generating token for user:', user.email);
@@ -199,17 +212,20 @@ app.get('/auth/google/callback', (req, res, next) => {
         );
 
         // Set cookie directly in headers
-        const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
+        const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+        const sameSite = isProd ? 'None' : 'Lax';
+        const secure = isProd ? '; Secure' : '';
+        const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}${secure}`;
         res.setHeader('Set-Cookie', cookieValue);
         
         console.log('Setting cookie for Google auth:', cookieValue);
 
         // Set additional CORS headers
         res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+        res.setHeader('Access-Control-Allow-Origin', frontendUrl);
 
         // Redirect to the frontend
-        res.redirect('http://localhost:5173/shop/home');
+        res.redirect(`${frontendUrl}/shop/home`);
     })(req, res, next);
 });
 
