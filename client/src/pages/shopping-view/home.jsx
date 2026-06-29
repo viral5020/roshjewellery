@@ -11,10 +11,6 @@ import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { useToast } from "@/components/ui/use-toast";
 import { getFeatureImages } from "@/store/common-slice";
 import Footer from "@/components/shopping-view/footer";
-import ReactChatbot from "react-chatbotify";
-import config from "@/components/shopping-view/chatbotConfig";
-import ActionProvider from "@/components/shopping-view/ActionProvider";
-import MessageParser from "@/components/shopping-view/MessageParser";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight, Star, Award, Sparkles, ShieldCheck, Infinity } from "lucide-react";
 import { Instagram } from "lucide-react";
@@ -451,13 +447,6 @@ function ShoppingHome() {
 
 
 
-
-      {/* Chatbot Config remains */}
-      <ReactChatbot
-        config={config}
-        actionProvider={ActionProvider}
-        messageParser={MessageParser}
-      />
 
       {/* 9 & 10. Newsletter and Footer are combined in Footer Component */}
       <Footer />

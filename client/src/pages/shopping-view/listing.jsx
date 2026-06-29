@@ -52,6 +52,7 @@ function ShoppingListing() {
 
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("price-lowtohigh");
+  const [openMobileFilters, setOpenMobileFilters] = useState(false);
 
   // Set default filters on mount (or when categoryName changes)
   // Set default filters on mount (or when categoryName changes)
@@ -244,7 +245,22 @@ function ShoppingListing() {
           
           {/* Left: Filter Toggle */}
           <div className="flex-1 flex justify-start">
-            {/* Filter Toggle has been removed to keep sidebar always open */}
+            <Sheet open={openMobileFilters} onOpenChange={setOpenMobileFilters}>
+              <SheetTrigger asChild>
+                <button className="md:hidden flex items-center gap-2 text-[10px] text-rosh-primary tracking-[0.2em] uppercase hover:text-rosh-accent transition-colors duration-300">
+                  <SlidersHorizontal className="h-4 w-4" strokeWidth={1.5} />
+                  <span>Filters</span>
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] bg-rosh-background border-r-rosh-primary/10 text-rosh-primary p-6 overflow-y-auto">
+                <SheetHeader className="border-b border-rosh-primary/10 pb-4 mb-6">
+                  <SheetTitle className="font-serif tracking-widest uppercase text-xl text-rosh-primary">
+                    Filters
+                  </SheetTitle>
+                </SheetHeader>
+                {filterComponent}
+              </SheetContent>
+            </Sheet>
           </div>
 
           {/* Middle: Title & Count */}
@@ -288,9 +304,9 @@ function ShoppingListing() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden w-full max-w-[1600px] mx-auto px-4 md:px-8 mt-4 md:mt-6">
         
-        {/* Always-open Sidebar */}
+        {/* Always-open Sidebar (Desktop only) */}
         <div 
-          className="w-full md:w-[280px] md:shrink-0 md:h-full md:overflow-y-auto custom-scrollbar md:pr-4 md:pb-8 mb-8 md:mb-0 md:mr-10"
+          className="hidden md:block w-[280px] md:shrink-0 md:h-full md:overflow-y-auto custom-scrollbar md:pr-4 md:pb-8 md:mr-10"
         >
           {filterComponent}
         </div>
