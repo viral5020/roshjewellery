@@ -1637,7 +1637,7 @@ function ShoppingCheckout() {
       {/* Hide Chatbot Styles */}
       <style dangerouslySetInnerHTML={{
         __html: `
-        #rcb-chat-bot, .rcb-chat-bot, [class^="rcb-"], [id^="rcb-"] {
+        #rcb-chat-bot, .rcb-chat-bot, [class*="rcb-"], [id*="rcb-"], [data-testid="chat-tooltip"], .rcb-chat-tooltip {
           display: none !important;
         }
       `}} />

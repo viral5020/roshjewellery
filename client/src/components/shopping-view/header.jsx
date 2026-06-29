@@ -1,6 +1,6 @@
 import { Menu, ShoppingCart, UserCog, LogOut, Search, Heart, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -101,17 +101,51 @@ function ShoppingHeader() {
                     
                     <nav className="flex flex-col gap-6 font-sans font-medium tracking-widest text-sm uppercase">
                       {luxuryNavLinks.map((menuItem) => (
-                        <span
-                          onClick={() => handleNavigate(menuItem)}
-                          className="cursor-pointer hover:text-rosh-accent transition-colors pb-2 border-b border-rosh-primary/10"
-                          key={menuItem.id}
-                        >
-                          {menuItem.label}
-                        </span>
+                        <SheetClose asChild key={menuItem.id}>
+                          <span
+                            onClick={() => handleNavigate(menuItem)}
+                            className="cursor-pointer hover:text-rosh-accent transition-colors pb-2 border-b border-rosh-primary/10"
+                          >
+                            {menuItem.label}
+                          </span>
+                        </SheetClose>
                       ))}
                     </nav>
 
                     <div className="mt-auto flex flex-col gap-6">
+                      {/* Mobile User Auth / Account Info */}
+                      <div className="flex flex-col gap-4 border-t border-rosh-primary/10 pt-6">
+                        {user ? (
+                          <>
+                            <SheetClose asChild>
+                              <span
+                                onClick={() => navigate("/shop/account")}
+                                className="cursor-pointer hover:text-rosh-accent transition-colors text-sm uppercase tracking-widest"
+                              >
+                                My Account
+                              </span>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <span
+                                onClick={handleLogout}
+                                className="cursor-pointer hover:text-rosh-accent transition-colors text-sm uppercase tracking-widest text-red-900"
+                              >
+                                Sign Out
+                              </span>
+                            </SheetClose>
+                          </>
+                        ) : (
+                          <SheetClose asChild>
+                            <span
+                              onClick={() => navigate("/auth/login")}
+                              className="cursor-pointer hover:text-rosh-accent transition-colors text-sm uppercase tracking-widest"
+                            >
+                              Sign In
+                            </span>
+                          </SheetClose>
+                        )}
+                      </div>
+
                       {/* Currency Selector Mobile */}
                       <div className="flex items-center justify-between border-t border-rosh-primary/10 pt-6">
                         <span className="text-xs tracking-widest uppercase text-rosh-primary/50">Currency</span>
@@ -209,33 +243,42 @@ function ShoppingHeader() {
               />
             </Sheet>
 
-            {/* User Avatar Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="hidden sm:flex hover:opacity-80 transition-opacity ml-2">
-                  <Avatar className="h-8 w-8 bg-rosh-primary/10 border border-rosh-primary/20">
-                    <AvatarFallback className="bg-transparent text-rosh-primary text-xs font-serif font-medium">
-                      {user?.userName?.[0]?.toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="bottom" align="end" className="w-56 mt-4 bg-rosh-background text-rosh-primary border-rosh-primary/10 rounded-none shadow-xl">
-                <DropdownMenuLabel className="font-serif font-normal tracking-wide">
-                  Welcome, {user?.userName}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-rosh-primary/10" />
-                <DropdownMenuItem onClick={() => navigate("/shop/account")} className="cursor-pointer focus:bg-rosh-primary/5 focus:text-rosh-primary">
-                  <UserCog className="mr-2 h-4 w-4" strokeWidth={1.5} />
-                  <span className="tracking-wide text-sm font-light">My Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-rosh-primary/10" />
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer focus:bg-rosh-primary/5 focus:text-rosh-primary text-red-900 focus:text-red-900">
-                  <LogOut className="mr-2 h-4 w-4" strokeWidth={1.5} />
-                  <span className="tracking-wide text-sm font-light">Sign Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* User Avatar Dropdown or Login button */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex hover:opacity-80 transition-opacity ml-2 focus:outline-none">
+                    <Avatar className="h-8 w-8 bg-rosh-primary/10 border border-rosh-primary/20">
+                      <AvatarFallback className="bg-transparent text-rosh-primary text-xs font-serif font-medium">
+                        {user?.userName?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="bottom" align="end" className="w-56 mt-4 bg-rosh-background text-rosh-primary border-rosh-primary/10 rounded-none shadow-xl">
+                  <DropdownMenuLabel className="font-serif font-normal tracking-wide">
+                    Welcome, {user?.userName}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-rosh-primary/10" />
+                  <DropdownMenuItem onClick={() => navigate("/shop/account")} className="cursor-pointer focus:bg-rosh-primary/5 focus:text-rosh-primary">
+                    <UserCog className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                    <span className="tracking-wide text-sm font-light">My Account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-rosh-primary/10" />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer focus:bg-rosh-primary/5 focus:text-rosh-primary text-red-900 focus:text-red-900">
+                    <LogOut className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                    <span className="tracking-wide text-sm font-light">Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <button 
+                onClick={() => navigate("/auth/login")}
+                className="hover:text-rosh-accent transition-colors text-[10px] uppercase font-sans font-medium tracking-[0.2em] ml-2 border border-rosh-primary/10 px-3 py-1.5 hover:border-rosh-primary bg-transparent"
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </div>
