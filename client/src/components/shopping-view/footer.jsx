@@ -42,18 +42,26 @@ const Footer = ({ hideNewsletter = false }) => {
   useEffect(() => {
     fetch('/api/subcategories')
       .then(res => res.json())
-      .then(data => setDbSubcategories(data.subcategories || []))
+      .then(data => setDbSubcategories(data.subCategories || []))
       .catch(console.error);
   }, []);
 
   const handleNavigateToListingPage = (filterValue) => {
     const capitalizedFilter = filterValue.charAt(0).toUpperCase() + filterValue.slice(1);
     
+    // Find subcategory object matching the target collection name
+    const targetSubcat = dbSubcategories.find(
+      s => s.name.toLowerCase() === filterValue.toLowerCase() || 
+           (filterValue.toLowerCase() === "earrings" && s.name.toLowerCase() === "earings")
+    );
+    
+    const filterId = targetSubcat ? targetSubcat._id : capitalizedFilter;
+    
     const currentFilter = {
-      subcategories: [capitalizedFilter],
+      subcategories: [filterId],
     };
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
-    navigate(`/shop/listing?subcategories=${capitalizedFilter}`);
+    navigate(`/shop/listing?subcategories=${filterId}`);
   };
 
   const handleNewsletterSubmit = async (e) => {

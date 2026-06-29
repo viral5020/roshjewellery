@@ -1031,33 +1031,6 @@ function ShoppingCheckout() {
           </p>
         </div>
       
-      {/* Guest Checkout Option */}
-      {!user && (
-        <div className="mb-12">
-          <div className="border-b border-rosh-primary/10 pb-12 flex flex-col md:flex-row gap-8 md:gap-16 justify-center items-center">
-            <div className="text-center">
-              <h2 className="font-serif text-2xl italic mb-6">Returning Client?</h2>
-              <button
-                onClick={() => navigate('/auth/login?redirect=/shop/checkout')}
-                className="text-[10px] uppercase tracking-[0.2em] pb-1 border-b border-rosh-primary hover:text-rosh-accent hover:border-rosh-accent transition-colors"
-              >
-                Login to Checkout
-              </button>
-            </div>
-            <div className="h-[1px] w-12 md:w-[1px] md:h-16 bg-rosh-primary/10"></div>
-            <div className="text-center">
-              <h2 className="font-serif text-2xl italic mb-6">New Client?</h2>
-              <button
-                onClick={() => setIsGuestCheckout(true)}
-                className="text-[10px] uppercase tracking-[0.2em] pb-1 border-b border-rosh-primary hover:text-rosh-accent hover:border-rosh-accent transition-colors"
-              >
-                Continue as Guest
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {(!user || isGuestCheckout) && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 w-full">
           {/* Left Column: Forms */}
@@ -1660,6 +1633,14 @@ function ShoppingCheckout() {
           </div>
         </div>
       )}
+      
+      {/* Hide Chatbot Styles */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        #rcb-chat-bot, .rcb-chat-bot, [class^="rcb-"], [id^="rcb-"] {
+          display: none !important;
+        }
+      `}} />
       </div>
     </div>
   );

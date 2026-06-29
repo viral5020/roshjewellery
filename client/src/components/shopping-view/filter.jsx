@@ -6,46 +6,106 @@ import { Separator } from "../ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 function ProductFilter({ filters, handleFilter, selectedCategory }) {
-  const [subcategories, setSubcategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
 
   useEffect(() => {
-    console.log('Selected Category:', selectedCategory);
-    
-    // Fetch subcategories when category is selected from header
-    if (selectedCategory) {
-      console.log('Fetching subcategories for category:', selectedCategory);
-      // First get the category ID from the name
-      fetch('/api/categories')
-        .then(res => res.json())
-        .then(data => {
-          const category = data.categories.find(cat => 
-            cat.name.toLowerCase() === selectedCategory.toLowerCase()
-          );
-          if (category) {
-            // Now fetch subcategories using the category ID
-            return fetch(`/api/subcategories/category/${category._id}`);
-          }
-          throw new Error('Category not found');
-        })
-        .then(res => {
-          console.log('API Response:', res);
-          return res.json();
-        })
-        .then(data => {
-          console.log('Subcategories Data:', data);
-          setSubcategories(data.subCategories || []);
-        })
-        .catch(err => {
-          console.error('Error fetching subcategories:', err);
-          setSubcategories([]);
-        });
-    } else {
-      console.log('No category selected');
-      setSubcategories([]);
-    }
-  }, [selectedCategory]);
+    // Fetch all categories
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => {
+        setAllCategories(data.categories || []);
+      })
+      .catch(err => console.error('Error fetching categories:', err));
 
-  console.log('Current subcategories state:', subcategories);
+    // Fetch all subcategories
+    fetch('/api/subcategories')
+      .then(res => res.json())
+      .then(data => {
+        setAllSubcategories(data.subCategories || []);
+      })
+      .catch(err => console.error('Error fetching subcategories:', err));
+  }, []);
+
+  // Compute subcategories to display based on selectedCategory or checked category filters
+  let displayedSubcategories = [];
+
+  if (selectedCategory) {
+    // We are on a category page (e.g., /shop/Men or /shop/Women)
+    const activeCategory = allCategories.find(
+      cat => cat.name.toLowerCase() === selectedCategory.toLowerCase()
+    );
+    if (activeCategory) {
+      displayedSubcategories = allSubcategories.filter(sub => {
+        const subCatId = sub.category?._id ? String(sub.category._id) : String(sub.category);
+        return subCatId === String(activeCategory._id);
+      });
+    }
+  } else {
+    // We are on /shop/listing (Complete Collection)
+    const activeCategoryNames = filters?.category || [];
+    if (activeCategoryNames.length > 0) {
+      // Show only subcategories of checked categories
+      const activeCategoryIds = allCategories
+        .filter(cat => activeCategoryNames.some(name => name.toLowerCase() === cat.name.toLowerCase()))
+        .map(cat => String(cat._id));
+
+      displayedSubcategories = allSubcategories.filter(sub => {
+        const subCatId = sub.category?._id ? String(sub.category._id) : String(sub.category);
+        return activeCategoryIds.includes(subCatId);
+      });
+    } else {
+      // Show all subcategories if no category filter is checked
+      displayedSubcategories = allSubcategories;
+    }
+  }
+
+  // Group displayed subcategories by name to show unique names (case-insensitive)
+  const uniqueSubcategories = [];
+  const seenNames = new Set();
+  
+  for (const sub of displayedSubcategories) {
+    const normName = sub.name.toLowerCase() === "earings" ? "earrings" : sub.name.toLowerCase();
+    if (!seenNames.has(normName)) {
+      seenNames.add(normName);
+      uniqueSubcategories.push(sub);
+    }
+  }
+
+  const isSubcategoryChecked = (subName) => {
+    if (!filters || !filters.subcategories || filters.subcategories.length === 0) return false;
+    
+    // Find all IDs with this name
+    const matchingIds = allSubcategories
+      .filter(s => s.name.toLowerCase() === subName.toLowerCase() || 
+                   (subName.toLowerCase() === "earrings" && s.name.toLowerCase() === "earings"))
+      .map(s => String(s._id));
+      
+    return filters.subcategories.some(val => 
+      matchingIds.includes(String(val)) || String(val).toLowerCase() === subName.toLowerCase()
+    );
+  };
+
+  const handleSubcategoryToggle = (subcategory) => {
+    const isChecked = isSubcategoryChecked(subcategory.name);
+    // Find all IDs with this name
+    const matchingIds = allSubcategories
+      .filter(s => s.name.toLowerCase() === subcategory.name.toLowerCase() || 
+                   (subcategory.name.toLowerCase() === "earrings" && s.name.toLowerCase() === "earings"))
+      .map(s => String(s._id));
+      
+    if (isChecked) {
+      // Find the active ID currently in filters.subcategories and remove it
+      const activeId = filters.subcategories.find(val => 
+        matchingIds.includes(String(val)) || String(val).toLowerCase() === subcategory.name.toLowerCase()
+      );
+      if (activeId) {
+        handleFilter('subcategories', activeId);
+      }
+    } else {
+      handleFilter('subcategories', subcategory._id);
+    }
+  };
 
   return (
     <div className="bg-transparent pt-4 px-2">
@@ -81,30 +141,30 @@ function ProductFilter({ filters, handleFilter, selectedCategory }) {
 
         {!selectedCategory && <div className="w-full h-[1px] bg-rosh-primary/10 my-8"></div>}
 
-        {/* Subcategories */}
-        {selectedCategory && subcategories.length > 0 && (
+        {/* Subcategories (Collections) */}
+        {uniqueSubcategories.length > 0 && (
           <div>
-            <h3 className="text-[10px] uppercase tracking-[0.2em] font-medium text-rosh-primary mb-4">Category</h3>
+            <h3 className="text-[10px] uppercase tracking-[0.2em] font-medium text-rosh-primary mb-4">
+              {selectedCategory ? "Category" : "Collections"}
+            </h3>
             <div className="grid gap-3">
-              {subcategories.map((subcategory) => (
+              {uniqueSubcategories.map((subcategory) => (
                 <Label key={subcategory._id} className="flex items-center gap-3 font-light text-sm text-rosh-primary/70 hover:text-rosh-primary cursor-pointer group transition-colors py-1">
                   <Checkbox
-                    checked={
-                      filters &&
-                      filters.subcategories &&
-                      filters.subcategories.indexOf(subcategory._id) > -1
-                    }
-                    onCheckedChange={() => handleFilter('subcategories', subcategory._id)}
+                    checked={isSubcategoryChecked(subcategory.name)}
+                    onCheckedChange={() => handleSubcategoryToggle(subcategory)}
                     className="border-rosh-primary/30 text-rosh-background data-[state=checked]:bg-rosh-primary data-[state=checked]:border-rosh-primary shrink-0"
                   />
-                  <span className="group-hover:translate-x-1 transition-transform duration-300 flex-1 break-words leading-normal">{subcategory.name}</span>
+                  <span className="group-hover:translate-x-1 transition-transform duration-300 flex-1 break-words leading-normal">
+                    {subcategory.name.toLowerCase() === "earings" ? "Earrings" : subcategory.name}
+                  </span>
                 </Label>
               ))}
             </div>
           </div>
         )}
 
-        {selectedCategory && subcategories.length > 0 && <div className="w-full h-[1px] bg-rosh-primary/10 my-8"></div>}
+        {uniqueSubcategories.length > 0 && <div className="w-full h-[1px] bg-rosh-primary/10 my-8"></div>}
 
         {/* Metal Type Filter */}
         <div>

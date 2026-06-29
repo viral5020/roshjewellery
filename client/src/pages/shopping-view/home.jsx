@@ -13,7 +13,7 @@ import { getFeatureImages } from "@/store/common-slice";
 import Footer from "@/components/shopping-view/footer";
 import ReactChatbot from "react-chatbotify";
 import config from "@/components/shopping-view/chatbotConfig";
-import ActionProvider from "@/components/shopping-view/ActionProvider"; 
+import ActionProvider from "@/components/shopping-view/ActionProvider";
 import MessageParser from "@/components/shopping-view/MessageParser";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight, Star, Award, Sparkles, ShieldCheck, Infinity } from "lucide-react";
@@ -93,14 +93,14 @@ function ShoppingHome() {
   const handleNavigateToListingPage = (filterSection, filterValue) => {
     sessionStorage.removeItem("filters");
     let filterId = filterValue;
-    
+
     if (filterSection === 'subcategories') {
-       const subcat = dbSubcategories.find(s => s.name.toLowerCase() === filterValue.toLowerCase());
-       if (subcat) {
-          filterId = subcat._id;
-       }
+      const subcat = dbSubcategories.find(s => s.name.toLowerCase() === filterValue.toLowerCase());
+      if (subcat) {
+        filterId = subcat._id;
+      }
     }
-    
+
     const currentFilter = {
       [filterSection]: [filterId],
     };
@@ -134,15 +134,15 @@ function ShoppingHome() {
 
   const bestSellers = productList && productList.length > 0 ? productList.slice(0, 4) : [];
   const newArrivals = productList && productList.length > 0 ? productList.slice(4, 10) : [];
-  
+
   // Dynamic images from product list to avoid stock photos
-  const dynamicGalleryImages = productList && productList.length > 0 
-    ? productList.slice(0, 4).map(p => p.image) 
+  const dynamicGalleryImages = productList && productList.length > 0
+    ? productList.slice(0, 4).map(p => p.image)
     : [heroImage, heroImage, heroImage, heroImage];
 
   const getImageFor = (keyword, defaultIndex) => {
-    const item = productList?.find(p => 
-      p.category?.toLowerCase().includes(keyword) || 
+    const item = productList?.find(p =>
+      p.category?.toLowerCase().includes(keyword) ||
       p.title?.toLowerCase().includes(keyword)
     );
     return item?.image || (productList && productList.length > defaultIndex ? productList[defaultIndex].image : heroImage);
@@ -163,7 +163,7 @@ function ShoppingHome() {
 
   return (
     <div className="flex flex-col min-h-screen bg-rosh-background text-rosh-primary overflow-x-hidden font-sans">
-      
+
       {/* 1. Premium Hero Section */}
       <section className="relative w-full h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-rosh-primary">
@@ -179,17 +179,17 @@ function ShoppingHome() {
           )}
           <div className="absolute inset-0 bg-rosh-primary/40 mix-blend-multiply"></div>
         </div>
-        
+
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
             className="text-4xl md:text-[80px] leading-tight text-rosh-background mb-4 md:mb-6"
           >
-            Crafted To Be <br/><span className="italic text-rosh-highlight">Treasured Forever</span>
+            Crafted To Be <br /><span className="italic text-rosh-highlight">Treasured Forever</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
@@ -197,19 +197,19 @@ function ShoppingHome() {
           >
             Fine jewellery designed with timeless elegance, exceptional craftsmanship, and modern luxury.
           </motion.p>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.9 }}
             className="flex flex-col sm:flex-row gap-3 md:gap-6 w-full sm:w-auto px-8 sm:px-0"
           >
-            <button 
+            <button
               onClick={() => navigate('/shop/listing')}
               className="w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 text-xs md:text-sm bg-rosh-background text-rosh-primary uppercase tracking-widest hover:bg-rosh-highlight hover:text-rosh-background transition-colors duration-300"
             >
               Shop Collection
             </button>
-            <button 
+            <button
               onClick={() => navigate('/shop/listing')}
               className="w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 text-xs md:text-sm border border-rosh-background text-rosh-background uppercase tracking-widest hover:bg-rosh-background/10 transition-colors duration-300"
             >
@@ -223,7 +223,7 @@ function ShoppingHome() {
       <section className="py-16 md:py-24 w-full">
         <div className="max-w-[1600px] mx-auto px-4 md:px-8">
           <div className="mb-10 md:mb-12 text-left">
-            <motion.div 
+            <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -237,16 +237,16 @@ function ShoppingHome() {
 
         <div className="relative max-w-[1600px] mx-auto group/slider">
           {canScrollLeft && (
-            <button 
+            <button
               onClick={() => scrollCategories('left')}
               className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 -mt-6 z-10 w-12 h-12 bg-rosh-background/90 text-rosh-primary flex items-center justify-center rounded-full opacity-100 md:opacity-0 group-hover/slider:opacity-100 transition-opacity duration-300 hover:bg-rosh-primary hover:text-rosh-background shadow-lg"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
           )}
-          
+
           {canScrollRight && (
-            <button 
+            <button
               onClick={() => scrollCategories('right')}
               className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 -mt-6 z-10 w-12 h-12 bg-rosh-background/90 text-rosh-primary flex items-center justify-center rounded-full opacity-100 md:opacity-0 group-hover/slider:opacity-100 transition-opacity duration-300 hover:bg-rosh-primary hover:text-rosh-background shadow-lg"
             >
@@ -254,7 +254,7 @@ function ShoppingHome() {
             </button>
           )}
 
-          <motion.div 
+          <motion.div
             ref={categorySliderRef}
             onScroll={handleScroll}
             initial="hidden"
@@ -263,27 +263,27 @@ function ShoppingHome() {
             variants={staggerContainer}
             className="flex overflow-x-auto px-4 md:px-8 pb-12 gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar scroll-smooth"
           >
-          {categories.map((cat, index) => (
-            <motion.div 
-              key={cat.id}
-              variants={fadeUpVariant}
-              className="group relative overflow-hidden cursor-pointer bg-rosh-primary shrink-0 w-[220px] md:w-[280px] aspect-[4/5] snap-center"
-              onClick={() => handleNavigateToListingPage('subcategories', cat.label)}
-            >
-              <img 
-                src={cat.image} 
-                alt={cat.label} 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rosh-primary/90 via-rosh-primary/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
-                <h3 className="text-rosh-background text-lg md:text-xl uppercase tracking-[0.2em] mb-2">{cat.label}</h3>
-                <span className="opacity-100 translate-y-0 md:opacity-0 md:translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 flex items-center text-rosh-highlight text-xs tracking-widest uppercase">
-                  Discover <ArrowRight className="w-3 h-3 ml-2" />
-                </span>
-              </div>
-            </motion.div>
-          ))}
+            {categories.map((cat, index) => (
+              <motion.div
+                key={cat.id}
+                variants={fadeUpVariant}
+                className="group relative overflow-hidden cursor-pointer bg-rosh-primary shrink-0 w-[220px] md:w-[280px] aspect-[4/5] snap-center"
+                onClick={() => handleNavigateToListingPage('subcategories', cat.label)}
+              >
+                <img
+                  src={cat.image}
+                  alt={cat.label}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-rosh-primary/90 via-rosh-primary/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
+                  <h3 className="text-rosh-background text-lg md:text-xl uppercase tracking-[0.2em] mb-2">{cat.label}</h3>
+                  <span className="opacity-100 translate-y-0 md:opacity-0 md:translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 flex items-center text-rosh-highlight text-xs tracking-widest uppercase">
+                    Discover <ArrowRight className="w-3 h-3 ml-2" />
+                  </span>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -291,7 +291,7 @@ function ShoppingHome() {
       {/* 3. Brand Story Section */}
       <section className="py-16 md:py-24 bg-rosh-primary text-rosh-background">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -302,7 +302,7 @@ function ShoppingHome() {
               <img src={storyImg} alt="Brand Craftsmanship" className="w-full h-auto aspect-[4/5] object-cover opacity-90" />
             )}
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -310,12 +310,15 @@ function ShoppingHome() {
             className="md:w-1/2 flex flex-col justify-center"
           >
             <div className="text-rosh-secondary text-sm uppercase tracking-widest mb-6">Our Philosophy</div>
-            <h2 className="mb-8">The Art of <br/>Modern Heirloom</h2>
+            <h2 className="mb-8">The Art of <br />Modern Heirloom</h2>
             <p className="text-rosh-background/80 mb-8 font-light leading-relaxed">
               Every piece of Rosh fine jewellery is a testament to extraordinary craftsmanship and timeless design. We believe in creating pieces that transcend seasons—modern heirlooms crafted with ethically sourced materials designed to be cherished for generations.
             </p>
-            <button className="self-start pb-2 border-b border-rosh-highlight text-rosh-highlight uppercase tracking-widest text-xs hover:text-rosh-background hover:border-rosh-background transition-colors duration-300">
-              Discover Our Story
+            <button 
+              onClick={() => navigate('/shop/custom')}
+              className="self-start pb-2 border-b border-rosh-highlight text-rosh-highlight uppercase tracking-widest text-xs hover:text-rosh-background hover:border-rosh-background transition-colors duration-300"
+            >
+              customize your product
             </button>
           </motion.div>
         </div>
@@ -324,7 +327,7 @@ function ShoppingHome() {
       {/* 4. Best Sellers */}
       <section className="py-16 md:py-24 px-6 md:px-12 max-w-[1400px] mx-auto w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-4">
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -333,7 +336,7 @@ function ShoppingHome() {
             <h2 className="uppercase text-rosh-primary mb-2">Bestsellers</h2>
             <p className="text-rosh-primary/60 font-light text-sm tracking-wide">The 'It' pieces everyone is obsessing over.</p>
           </motion.div>
-          <button 
+          <button
             onClick={() => navigate('/shop/listing')}
             className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
           >
@@ -341,7 +344,7 @@ function ShoppingHome() {
           </button>
         </div>
 
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
@@ -366,7 +369,7 @@ function ShoppingHome() {
       <section className="py-16 md:py-24 bg-[#EBE5DE] w-full">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-4">
-            <motion.div 
+            <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
@@ -375,15 +378,15 @@ function ShoppingHome() {
               <h2 className="uppercase text-rosh-primary mb-2">New Arrivals</h2>
               <p className="text-rosh-primary/60 font-light text-sm tracking-wide">Be the first to wear our newest designs.</p>
             </motion.div>
-            <button 
+            <button
               onClick={() => navigate('/shop/listing')}
               className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
             >
               Shop New In
             </button>
           </div>
-          
-          <motion.div 
+
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
@@ -392,7 +395,7 @@ function ShoppingHome() {
           >
             {newArrivals.map((productItem) => (
               <motion.div key={productItem._id} variants={fadeUpVariant} className="group">
-                 <ShoppingProductTile
+                <ShoppingProductTile
                   handleGetProductDetails={handleGetProductDetails}
                   product={productItem}
                   handleAddtoCart={handleAddtoCart}
@@ -407,7 +410,7 @@ function ShoppingHome() {
 
       {/* 6. Why Choose Rosh */}
       <section className="py-16 md:py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -433,15 +436,16 @@ function ShoppingHome() {
           }].map((feature, i) => {
             const Icon = feature.icon;
             return (
-            <motion.div key={i} variants={fadeUpVariant} className="flex flex-col items-center group cursor-default">
-              <div className="relative w-16 h-16 mb-8 flex items-center justify-center rounded-full bg-rosh-primary/5 group-hover:bg-rosh-primary transition-colors duration-500">
-                <div className="absolute inset-0 rounded-full border border-rosh-primary/10 group-hover:scale-110 group-hover:border-rosh-accent transition-all duration-700"></div>
-                <Icon className="w-7 h-7 text-rosh-primary group-hover:text-rosh-highlight transition-colors duration-500 stroke-[1.5]" />
-              </div>
-              <h4 className="mb-3 text-rosh-primary uppercase tracking-[0.15em] text-sm md:text-base font-medium">{feature.title}</h4>
-              <p className="text-sm font-light text-rosh-primary/60 tracking-wide leading-relaxed max-w-[260px]">{feature.desc}</p>
-            </motion.div>
-          )})}
+              <motion.div key={i} variants={fadeUpVariant} className="flex flex-col items-center group cursor-default">
+                <div className="relative w-16 h-16 mb-8 flex items-center justify-center rounded-full bg-rosh-primary/5 group-hover:bg-rosh-primary transition-colors duration-500">
+                  <div className="absolute inset-0 rounded-full border border-rosh-primary/10 group-hover:scale-110 group-hover:border-rosh-accent transition-all duration-700"></div>
+                  <Icon className="w-7 h-7 text-rosh-primary group-hover:text-rosh-highlight transition-colors duration-500 stroke-[1.5]" />
+                </div>
+                <h4 className="mb-3 text-rosh-primary uppercase tracking-[0.15em] text-sm md:text-base font-medium">{feature.title}</h4>
+                <p className="text-sm font-light text-rosh-primary/60 tracking-wide leading-relaxed max-w-[260px]">{feature.desc}</p>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </section>
 
@@ -454,12 +458,13 @@ function ShoppingHome() {
         actionProvider={ActionProvider}
         messageParser={MessageParser}
       />
-      
+
       {/* 9 & 10. Newsletter and Footer are combined in Footer Component */}
       <Footer />
 
       {/* Style for hide-scrollbar */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }

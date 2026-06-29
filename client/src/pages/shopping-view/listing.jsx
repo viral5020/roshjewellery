@@ -65,10 +65,18 @@ function ShoppingListing() {
       freshFilters.category = [];
     }
 
-    setSort("price-lowtohigh");
-    setFilters(freshFilters);
-    sessionStorage.setItem("filters", JSON.stringify(freshFilters));
-  }, [categoryName]);
+    // Read initial subcategories from searchParams if present
+    const urlSubcat = searchParams.get("subcategories");
+    if (urlSubcat) {
+      freshFilters.subcategories = urlSubcat.split(",");
+    }
+
+    const isDifferent = JSON.stringify(freshFilters) !== JSON.stringify(filters);
+    if (isDifferent) {
+      setFilters(freshFilters);
+      sessionStorage.setItem("filters", JSON.stringify(freshFilters));
+    }
+  }, [categoryName, searchParams]);
 
 
 
@@ -181,7 +189,7 @@ function ShoppingListing() {
   useEffect(() => {
     fetch('/api/subcategories')
       .then(res => res.json())
-      .then(data => setDbSubcategories(data.subcategories || []))
+      .then(data => setDbSubcategories(data.subCategories || []))
       .catch(console.error);
   }, []);
 
@@ -229,9 +237,9 @@ function ShoppingListing() {
   }) || [];
 
   return (
-    <div className="bg-rosh-background min-h-screen text-rosh-primary font-sans flex flex-col overflow-x-hidden">
+    <div className="bg-rosh-background md:h-[calc(100vh-80px)] md:overflow-hidden text-rosh-primary font-sans flex flex-col">
       {/* Unified Control Bar */}
-      <div className="sticky top-16 md:top-[72px] z-40 bg-rosh-background/95 backdrop-blur-md border-b border-rosh-primary/10 w-full transition-all duration-300">
+      <div className="bg-rosh-background/95 backdrop-blur-md border-b border-rosh-primary/10 w-full shrink-0">
         <div className={`max-w-[1600px] mx-auto px-4 md:px-8 flex items-center justify-between ${categoryName ? 'py-2' : 'py-4'}`}>
           
           {/* Left: Filter Toggle */}
@@ -278,45 +286,47 @@ function ShoppingListing() {
       </div>
 
       {/* Main Content Area */}
-      <div className={`max-w-[1600px] w-full mx-auto px-4 md:px-8 mb-24 flex-1 flex flex-col md:flex-row items-start transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${categoryName ? 'mt-4' : 'mt-8 md:mt-12'}`}>
+      <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden w-full max-w-[1600px] mx-auto px-4 md:px-8 mt-4 md:mt-6">
         
         {/* Always-open Sidebar */}
         <div 
-          className="w-full md:w-[280px] md:shrink-0 md:sticky md:top-[180px] md:max-h-[calc(100vh-200px)] md:overflow-y-auto custom-scrollbar md:pr-2 md:pb-8 mb-8 md:mb-0 md:mr-10"
+          className="w-full md:w-[280px] md:shrink-0 md:h-full md:overflow-y-auto custom-scrollbar md:pr-4 md:pb-8 mb-8 md:mb-0 md:mr-10"
         >
           {filterComponent}
         </div>
         
-        {/* Product Grid */}
-        <div className="flex-1 w-full min-w-0 transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 lg:gap-x-8 gap-y-12 md:gap-y-16">
-            {displayedProductList && displayedProductList.length > 0 ? (
-              displayedProductList.map((productItem) => (
-                <ShoppingProductTile
-                  key={productItem._id}
-                  handleGetProductDetails={handleGetProductDetails}
-                  product={productItem}
-                  handleAddtoCart={handleAddtoCart}
-                  currency={currency}
-                  exchangeRates={exchangeRates}
-                  convertedPrice={convertPrice(productItem.price)}
-                  convertedSalePrice={
-                    productItem.salePrice > 0
-                      ? convertPrice(productItem.salePrice)
-                      : null
-                  }
-                />
-              ))
-            ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-20 opacity-60">
-                <p className="text-rosh-primary font-serif text-3xl italic mb-4">No pieces discovered.</p>
-                <p className="text-[10px] md:text-xs tracking-[0.2em] uppercase font-light">Please adjust your filters.</p>
-              </div>
-            )}
+        {/* Product Grid and Footer (Content Section) */}
+        <div className="flex-1 w-full min-w-0 md:h-full md:overflow-y-auto custom-scrollbar flex flex-col justify-between">
+          <div className="w-full transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)] pb-16">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 lg:gap-x-8 gap-y-12 md:gap-y-16">
+              {displayedProductList && displayedProductList.length > 0 ? (
+                displayedProductList.map((productItem) => (
+                  <ShoppingProductTile
+                    key={productItem._id}
+                    handleGetProductDetails={handleGetProductDetails}
+                    product={productItem}
+                    handleAddtoCart={handleAddtoCart}
+                    currency={currency}
+                    exchangeRates={exchangeRates}
+                    convertedPrice={convertPrice(productItem.price)}
+                    convertedSalePrice={
+                      productItem.salePrice > 0
+                        ? convertPrice(productItem.salePrice)
+                        : null
+                    }
+                  />
+                ))
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-20 opacity-60">
+                  <p className="text-rosh-primary font-serif text-3xl italic mb-4">No pieces discovered.</p>
+                  <p className="text-[10px] md:text-xs tracking-[0.2em] uppercase font-light">Please adjust your filters.</p>
+                </div>
+              )}
+            </div>
           </div>
+          <Footer />
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

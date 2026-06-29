@@ -79,7 +79,8 @@ if (isProd) {
 // Configure CORS
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://roshjewellery-1.onrender.com"
+  "https://roshjewellery-1.onrender.com",
+  "https://roshjewellery.onrender.com"
 ];
 if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL);
@@ -87,7 +88,23 @@ if (process.env.FRONTEND_URL) {
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+      
+      const isAllowed = 
+        origin.startsWith("http://localhost:") || 
+        origin.startsWith("http://127.0.0.1:") || 
+        origin.includes("roshjewellery") ||
+        allowedOrigins.includes(origin);
+        
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        console.log("CORS blocked origin:", origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
@@ -222,7 +239,7 @@ app.get('/auth/google/callback', (req, res, next) => {
 
         // Set additional CORS headers
         res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Origin', frontendUrl);
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin || frontendUrl);
 
         // Redirect to the frontend
         res.redirect(`${frontendUrl}/shop/home`);

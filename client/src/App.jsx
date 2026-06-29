@@ -103,6 +103,8 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
+          <Route path="forgotpassword" element={<ForgotPassword />} />
+          <Route path="resetpassword" element={<ResetPassword />} />
         </Route>
 
         <Route
@@ -166,8 +168,7 @@ function App() {
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
 
-        <Route path="/auth/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/auth/resetpassword/" element={<ResetPassword />} />
+
         <Route path="/product-details/:title" element={<ProductDetailsPage />} />
       </Routes>
     </div>

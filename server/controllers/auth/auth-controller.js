@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
     // Set additional CORS headers
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', frontendUrl);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || frontendUrl);
 
     // Log all response headers
     console.log('Response headers:', {
