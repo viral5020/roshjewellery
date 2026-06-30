@@ -3,13 +3,14 @@ const { Category, Product } = require("../../models");
 
 exports.createCategory = async (req, res) => {
     try {
-      const { name, image } = req.body;
-      console.log("Received category data:", { name, image }); // Log request data
+      const { name, image, sizeChartImage } = req.body;
+      console.log("Received category data:", { name, image, sizeChartImage }); // Log request data
   
       // Validate and create category logic here
       const newCategory = await Category.create({
         name,
         image,
+        sizeChartImage,
       });
   
       console.log("Created category:", newCategory); // Log the created category
@@ -54,10 +55,10 @@ exports.getCategory = async (req, res) => {
 // Update a category by id
 exports.updateCategory = async (req, res) => {
   try {
-    const { name, image } = req.body;
+    const { name, image, sizeChartImage } = req.body;
     const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
-      { name, image },
+      { name, image, sizeChartImage },
       { new: true }
     );
 

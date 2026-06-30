@@ -35,7 +35,7 @@ function CustomWorkPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       let fileUrl = "";
       if (formData.file) {
@@ -50,7 +50,7 @@ function CustomWorkPage() {
           fileUrl = uploadRes.data.result.url;
         }
       }
-      
+
       const response = await axios.post("/api/custom/create", {
         fullName: formData.fullName,
         number: formData.number,
@@ -93,19 +93,19 @@ function CustomWorkPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-rosh-background text-rosh-primary overflow-x-hidden font-sans">
-      
+
 
 
       {/* Form Section */}
       <section className="py-16 md:py-24 px-6 md:px-12 w-full max-w-4xl mx-auto">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="bg-rosh-primary/5 p-8 md:p-12 border border-rosh-primary/10 backdrop-blur-sm"
         >
           <div className="mb-10 text-center">
-            <h2 className="text-2xl md:text-3xl font-serif tracking-wide mb-4 text-rosh-primary">Commission a Masterpiece</h2>
+            <h2 className="text-2xl md:text-3xl font-serif tracking-wide mb-4 text-rosh-primary">Customize a Masterpiece</h2>
             <p className="text-rosh-primary/70 font-light text-sm md:text-base tracking-wide max-w-xl mx-auto leading-relaxed">
               From hand-selected diamonds to meticulously cast gold, detail your vision below. Our master artisans will work closely with you to craft an heirloom of unparalleled luxury.
             </p>
@@ -113,11 +113,11 @@ function CustomWorkPage() {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              
+
               {/* Full Name */}
               <div className="space-y-3">
                 <Label htmlFor="fullName" className="text-xs uppercase tracking-widest text-rosh-primary/80">Your Name *</Label>
-                <Input 
+                <Input
                   id="fullName"
                   name="fullName"
                   required
@@ -131,7 +131,7 @@ function CustomWorkPage() {
               {/* Number */}
               <div className="space-y-3">
                 <Label htmlFor="number" className="text-xs uppercase tracking-widest text-rosh-primary/80">Contact Number *</Label>
-                <Input 
+                <Input
                   id="number"
                   name="number"
                   type="tel"
@@ -146,7 +146,7 @@ function CustomWorkPage() {
               {/* Email */}
               <div className="space-y-3">
                 <Label htmlFor="email" className="text-xs uppercase tracking-widest text-rosh-primary/80">Email Address *</Label>
-                <Input 
+                <Input
                   id="email"
                   name="email"
                   type="email"
@@ -161,7 +161,7 @@ function CustomWorkPage() {
               {/* Select Type */}
               <div className="space-y-3">
                 <Label htmlFor="type" className="text-xs uppercase tracking-widest text-rosh-primary/80">Jewellery Type *</Label>
-                <select 
+                <select
                   id="type"
                   name="type"
                   required
@@ -185,7 +185,7 @@ function CustomWorkPage() {
                 <Label htmlFor="budget" className="text-xs uppercase tracking-widest text-rosh-primary/80">Investment Range (Min. ₹25,000) *</Label>
                 <div className="relative">
                   <span className="absolute left-0 top-3 text-rosh-primary/50 font-medium">₹</span>
-                  <Input 
+                  <Input
                     id="budget"
                     name="budget"
                     type="number"
@@ -202,7 +202,7 @@ function CustomWorkPage() {
               {/* Message */}
               <div className="space-y-3 md:col-span-2">
                 <Label htmlFor="message" className="text-xs uppercase tracking-widest text-rosh-primary/80">Your Vision & Specifications *</Label>
-                <textarea 
+                <textarea
                   id="message"
                   name="message"
                   required
@@ -218,8 +218,8 @@ function CustomWorkPage() {
               <div className="space-y-3 md:col-span-2">
                 <Label className="text-xs uppercase tracking-widest text-rosh-primary/80 block mb-2">Inspiration & Reference Images (Optional)</Label>
                 <div className="relative border border-dashed border-rosh-primary/30 transition-colors cursor-pointer overflow-hidden p-8 flex flex-col items-center justify-center bg-rosh-primary/5">
-                  <Input 
-                    type="file" 
+                  <Input
+                    type="file"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     accept="image/*"
@@ -232,7 +232,7 @@ function CustomWorkPage() {
                   ) : (
                     <div className="flex flex-col items-center text-rosh-primary/60 transition-colors">
                       <UploadCloud className="w-8 h-8 mb-3" strokeWidth={1.5} />
-                      <span className="text-sm tracking-wide font-light text-center">Click or drag images to upload<br/>(PNG, JPG, PDF)</span>
+                      <span className="text-sm tracking-wide font-light text-center">Click or drag images to upload<br />(PNG, JPG, PDF)</span>
                     </div>
                   )}
                 </div>
@@ -241,8 +241,8 @@ function CustomWorkPage() {
             </div>
 
             <div className="pt-8">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 rounded-none bg-rosh-primary text-rosh-background hover:bg-rosh-highlight hover:text-rosh-background hover:scale-[1.01] transition-all duration-300 font-sans tracking-widest uppercase text-sm"
               >

@@ -18,6 +18,10 @@ try {
       type: String,
       default: "",
     },
+    sizeChartImage: {
+      type: String,
+      default: "",
+    },
   }, { timestamps: true });
   
   Category = mongoose.model("Category", CategorySchema);

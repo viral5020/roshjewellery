@@ -271,8 +271,8 @@ const Footer = ({ hideNewsletter = false }) => {
             <motion.div variants={itemVariants} className="flex flex-col">
               <h4 className="font-sans font-medium text-rosh-background mb-8 tracking-[0.2em] uppercase text-[10px]">Connect</h4>
               <ul className="space-y-5 text-xs text-rosh-background/60 tracking-widest uppercase font-light mb-10">
-                <li><a href="mailto:concierge@rosh.com" className="hover:text-rosh-accent transition-colors duration-300 lowercase">concierge@rosh.com</a></li>
-                <li><a href="tel:+18001234567" className="hover:text-rosh-accent transition-colors duration-300">+1 800 123 4567</a></li>
+                <li><a href="mailto:roshfinejewellery@gmail.com" className="hover:text-rosh-accent transition-colors duration-300 lowercase">roshfinejewellery@gmail.com</a></li>
+                <li><a href="tel:+917208200828" className="hover:text-rosh-accent transition-colors duration-300">+91 7208200828</a></li>
               </ul>
               <div className="flex space-x-6">
                 <a href="#" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">

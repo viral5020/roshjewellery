@@ -56,6 +56,8 @@ import TrackOrderPage from "./pages/shopping-view/track-order";
 import Report from './pages/admin-view/Report';
 import OrderSuccess from "./pages/shopping-view/order-success";
 import CustomOrdersPage from "./pages/admin-view/CustomOrders";
+import NewArrivals from "./pages/shopping-view/new-arrivals";
+import BestSellers from "./pages/shopping-view/best-sellers";
 
 // Protected Route component for authenticated routes
 const ProtectedRoute = ({ isAuthenticated, user, children, redirectTo = "/auth/login", requiredRole = null }) => {
@@ -141,6 +143,8 @@ function App() {
         <Route path="/shop" element={<ShoppingLayout />}>
           <Route path="home" element={<ShoppingHome />} />
           <Route path="listing" element={<ShoppingListing />} />
+          <Route path="new-arrivals" element={<NewArrivals />} />
+          <Route path="best-sellers" element={<BestSellers />} />
           <Route path="custom" element={<CustomWorkPage />} />
           <Route path="contact" element={<ContactUs />} />
           <Route path="faq" element={<FAQPage />} />

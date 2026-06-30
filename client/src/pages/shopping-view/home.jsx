@@ -206,7 +206,7 @@ function ShoppingHome() {
               Shop Collection
             </button>
             <button
-              onClick={() => navigate('/shop/listing')}
+              onClick={() => navigate('/shop/new-arrivals')}
               className="w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 text-xs md:text-sm border border-rosh-background text-rosh-background uppercase tracking-widest hover:bg-rosh-background/10 transition-colors duration-300"
             >
               Explore New Arrivals
@@ -333,7 +333,7 @@ function ShoppingHome() {
             <p className="text-rosh-primary/60 font-light text-sm tracking-wide">The 'It' pieces everyone is obsessing over.</p>
           </motion.div>
           <button
-            onClick={() => navigate('/shop/listing')}
+            onClick={() => navigate('/shop/best-sellers')}
             className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
           >
             View All
@@ -375,7 +375,7 @@ function ShoppingHome() {
               <p className="text-rosh-primary/60 font-light text-sm tracking-wide">Be the first to wear our newest designs.</p>
             </motion.div>
             <button
-              onClick={() => navigate('/shop/listing')}
+              onClick={() => navigate('/shop/new-arrivals')}
               className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
             >
               Shop New In

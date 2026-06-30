@@ -122,7 +122,7 @@ function CustomOrdersPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Commission Request Details</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Customize Request Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="grid gap-6 py-4">

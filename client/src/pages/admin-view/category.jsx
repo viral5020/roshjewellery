@@ -8,6 +8,7 @@ import { Pencil, Trash2 } from "lucide-react";
 const initialCategoryFormData = {
   name: "",
   image: null,
+  sizeChartImage: null,
 };
 
 function Category() {
@@ -17,6 +18,7 @@ function Category() {
   const [openEditCategoryDialog, setOpenEditCategoryDialog] = useState(false);
   const [categoryFormData, setCategoryFormData] = useState(initialCategoryFormData); // Category form data
   const [uploadedImageUrl, setUploadedImageUrl] = useState(""); // Store uploaded image URL
+  const [uploadedSizeChartUrl, setUploadedSizeChartUrl] = useState(""); // Store uploaded size chart URL
   const [searchTerm, setSearchTerm] = useState(""); // State for the search term
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const { toast } = useToast();
@@ -54,6 +56,7 @@ function Category() {
     const categoryData = {
       ...categoryFormData,
       image: uploadedImageUrl,
+      sizeChartImage: uploadedSizeChartUrl,
     };
 
     try {
@@ -77,6 +80,7 @@ function Category() {
         setOpenEditCategoryDialog(false);
         setCategoryFormData(initialCategoryFormData);
         setUploadedImageUrl("");
+        setUploadedSizeChartUrl("");
         setEditingCategoryId(null);
         toast({
           title: editingCategoryId ? "Category updated successfully" : "Category created successfully",
@@ -100,8 +104,10 @@ function Category() {
     setCategoryFormData({
       name: category.name,
       image: category.image,
+      sizeChartImage: category.sizeChartImage || "",
     });
-    setUploadedImageUrl(category.image);
+    setUploadedImageUrl(category.image || "");
+    setUploadedSizeChartUrl(category.sizeChartImage || "");
     setOpenEditCategoryDialog(true);
   };
 
@@ -229,6 +235,20 @@ function Category() {
             setImageLoadingState={() => {}}
             imageLoadingState={false}
             isEditMode={false}
+            showSubImages={false}
+            label="Category Image"
+          />
+
+          <ProductImageUpload
+            imageFile={null}
+            setImageFile={() => {}}
+            uploadedImageUrl={uploadedSizeChartUrl}
+            setUploadedImageUrl={setUploadedSizeChartUrl}
+            setImageLoadingState={() => {}}
+            imageLoadingState={false}
+            isEditMode={false}
+            showSubImages={false}
+            label="Size Chart Image (Optional)"
           />
 
           <div className="py-6">
@@ -275,6 +295,20 @@ function Category() {
             setImageLoadingState={() => {}}
             imageLoadingState={false}
             isEditMode={true}
+            showSubImages={false}
+            label="Category Image"
+          />
+
+          <ProductImageUpload
+            imageFile={null}
+            setImageFile={() => {}}
+            uploadedImageUrl={uploadedSizeChartUrl}
+            setUploadedImageUrl={setUploadedSizeChartUrl}
+            setImageLoadingState={() => {}}
+            imageLoadingState={false}
+            isEditMode={true}
+            showSubImages={false}
+            label="Size Chart Image (Optional)"
           />
 
           <div className="py-6">

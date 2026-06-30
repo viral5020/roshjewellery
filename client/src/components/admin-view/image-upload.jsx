@@ -17,6 +17,8 @@ function ProductImageUpload({
   isCustomStyling = false,
   setSubImages = () => {},
   subImages = [],
+  showSubImages = true,
+  label = "Main Image",
 }) {
   const [subImageFiles, setSubImageFiles] = useState([]);
   const [uploadedSubImageUrls, setUploadedSubImageUrls] = useState(subImages);
@@ -157,7 +159,7 @@ function ProductImageUpload({
     <div className="space-y-4">
       {/* Main Image Upload */}
       <div className="space-y-2">
-        <Label>Main Image</Label>
+        <Label>{label}</Label>
         <div
           className={`border-2 border-dashed rounded-lg p-4 ${
             isEditMode ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
@@ -210,82 +212,84 @@ function ProductImageUpload({
       </div>
 
       {/* Sub Images Upload */}
-      <div className="space-y-2">
-        <Label>Sub Images (Max 4)</Label>
-        <div className="flex flex-wrap gap-4">
-          {uploadedSubImageUrls.map((url, index) => (
-            <div key={`existing-${index}`} className="relative w-24 h-24 border-2 border-dashed rounded-lg">
-              <img
-                src={url}
-                alt={`Sub Image ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 text-red-600"
-                onClick={() => handleRemoveSubImage(index)}
-                disabled={subImageUploading}
+      {showSubImages && (
+        <div className="space-y-2">
+          <Label>Sub Images (Max 4)</Label>
+          <div className="flex flex-wrap gap-4">
+            {uploadedSubImageUrls.map((url, index) => (
+              <div key={`existing-${index}`} className="relative w-24 h-24 border-2 border-dashed rounded-lg">
+                <img
+                  src={url}
+                  alt={`Sub Image ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1 right-1 text-red-600"
+                  onClick={() => handleRemoveSubImage(index)}
+                  disabled={subImageUploading}
+                >
+                  <XIcon className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            {subImageFiles.map((file, index) => (
+              <div key={`new-${index}`} className="relative w-24 h-24 border-2 border-dashed rounded-lg">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`New Sub Image ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1 right-1 text-red-600"
+                  onClick={() => handleRemoveSubImage(index)}
+                  disabled={subImageUploading}
+                >
+                  <XIcon className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            {uploadedSubImageUrls.length + subImageFiles.length < 4 && (
+              <Label
+                htmlFor="sub-images-upload"
+                className={`flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg ${
+                  isEditMode || subImageUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                }`}
               >
-                <XIcon className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-          {subImageFiles.map((file, index) => (
-            <div key={`new-${index}`} className="relative w-24 h-24 border-2 border-dashed rounded-lg">
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`New Sub Image ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 text-red-600"
-                onClick={() => handleRemoveSubImage(index)}
-                disabled={subImageUploading}
-              >
-                <XIcon className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-          {uploadedSubImageUrls.length + subImageFiles.length < 4 && (
-            <Label
-              htmlFor="sub-images-upload"
-              className={`flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg ${
-                isEditMode || subImageUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-              }`}
+                {subImageUploading ? (
+                  <Skeleton className="w-8 h-8 rounded-full" />
+                ) : (
+                  <>
+                    <UploadCloudIcon className="w-8 h-8 text-muted-foreground mb-2" />
+                    <span>+</span>
+                  </>
+                )}
+                <Input
+                  id="sub-images-upload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleSubImageFileChange}
+                  className="hidden"
+                  disabled={isEditMode || subImageUploading}
+                />
+              </Label>
+            )}
+          </div>
+          {subImageFiles.length > 0 && (
+            <Button
+              onClick={uploadSubImages}
+              disabled={subImageUploading}
+              className="mt-2"
             >
-              {subImageUploading ? (
-                <Skeleton className="w-8 h-8 rounded-full" />
-              ) : (
-                <>
-                  <UploadCloudIcon className="w-8 h-8 text-muted-foreground mb-2" />
-                  <span>+</span>
-                </>
-              )}
-              <Input
-                id="sub-images-upload"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleSubImageFileChange}
-                className="hidden"
-                disabled={isEditMode || subImageUploading}
-              />
-            </Label>
+              {subImageUploading ? "Uploading..." : "Upload Sub Images"}
+            </Button>
           )}
         </div>
-        {subImageFiles.length > 0 && (
-          <Button
-            onClick={uploadSubImages}
-            disabled={subImageUploading}
-            className="mt-2"
-          >
-            {subImageUploading ? "Uploading..." : "Upload Sub Images"}
-          </Button>
-        )}
-      </div>
+      )}
     </div>
   );
 }

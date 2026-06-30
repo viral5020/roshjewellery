@@ -85,12 +85,12 @@ function SearchProducts() {
   return (
     <div className="container mx-auto md:px-6 px-4 py-8">
       {/* Search Bar Section */}
-      <div className="w-0 flex items-center justify-center fixed top-12 left-0 px-4 py-6 z-10 bg-white">
+      <div className="w-full flex items-center justify-center fixed top-12 left-0 px-4 py-6 z-10 bg-white">
         <Input
           value={keyword}
           name="keyword"
           onChange={(event) => setKeyword(event.target.value)}
-          className="py-6 w-full md:w-1/2"
+          className="py-6 w-full md:w-1/2 bg-white text-black border-2 border-gray-300"
           placeholder="Search Products..."
         />
       </div>

@@ -12,8 +12,14 @@ import {
   setProductDetails,
   fetchProductDetailsByTitle
 } from "@/store/shop/products-slice";
-import { ArrowLeftCircle, File, Gift, Heart, MessageCircle, RefreshCcw, Truck, ShieldCheck } from 'lucide-react';
+import { ArrowLeftCircle, File, Gift, Heart, MessageCircle, RefreshCcw, Truck, ShieldCheck, Star, Ruler } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import SimilarProducts from "@/components/shopping-view/similar-products";
+import StarRatingComponent from "@/components/common/star-rating";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { getReviews, addReview } from "@/store/shop/review-slice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -56,8 +62,19 @@ function ProductDetailsPage() {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
+  const { reviews } = useSelector((state) => state.shopReview);
   const [openAccordion, setOpenAccordion] = useState("specifications");
   const { toast } = useToast();
+  
+  const [categories, setCategories] = useState([]);
+  const [sizeChartOpen, setSizeChartOpen] = useState(false);
+
+  const [reviewMsg, setReviewMsg] = useState("");
+  const [rating, setRating] = useState(0);
+
+  const averageReview = reviews?.length > 0
+    ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) / reviews.length
+    : 0;
 
   const toggleAccordion = (id) => {
     setOpenAccordion(openAccordion === id ? null : id);
@@ -81,6 +98,17 @@ function ProductDetailsPage() {
     "rose-gold-polished": "linear-gradient(135deg, #f0c0a0, #c07840)",
   };
 
+
+  const currentCategory = categories.find(c => c.name === productDetails?.category);
+  const sizeChartImage = currentCategory?.sizeChartImage;
+
+  useEffect(() => {
+    // Fetch categories to get size chart
+    fetch("/api/categories")
+      .then(res => res.json())
+      .then(data => setCategories(data.categories || []))
+      .catch(err => console.error("Error fetching categories:", err));
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -122,7 +150,10 @@ function ProductDetailsPage() {
     if (productDetails?.image) {
       setMainImage(productDetails.image);
     }
-  }, [productDetails]);
+    if (productDetails?._id) {
+      dispatch(getReviews(productDetails._id));
+    }
+  }, [productDetails, dispatch]);
 
   function handleQuantityChange(value) {
     setQuantity((prevQuantity) => {
@@ -230,6 +261,50 @@ function ProductDetailsPage() {
       });
   }
 
+  function handleRatingChange(getRating) {
+    setRating(getRating);
+  }
+
+  function handleAddReview() {
+    if (!user?.id) {
+      toast({
+        title: "You must be logged in to submit a review.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    dispatch(
+      addReview({
+        productId: productDetails?._id,
+        userId: user?.id,
+        userName: user?.userName,
+        reviewMessage: reviewMsg,
+        reviewValue: rating,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        setRating(0);
+        setReviewMsg("");
+        dispatch(getReviews(productDetails?._id));
+        toast({
+          title: "Review added successfully!",
+        });
+      } else {
+        toast({
+          title: "Failed to add review",
+          variant: "destructive",
+        });
+      }
+    }).catch((error) => {
+      console.error("Error submitting review:", error);
+      toast({
+        title: "An error occurred while adding review",
+        variant: "destructive",
+      });
+    });
+  }
+
   const convertPrice = (price) => {
     if (!exchangeRates || !currency || !exchangeRates[currency]) {
       return price;
@@ -321,7 +396,7 @@ function ProductDetailsPage() {
                 {productDetails?.title}
               </h1>
               
-              <div className="flex items-end gap-3 mb-4">
+              <div className="flex items-end gap-3 mb-2">
                 <span className="text-lg md:text-xl font-sans font-medium tracking-wide">
                   {currency} {convertPrice(productDetails?.price)}
                 </span>
@@ -331,6 +406,21 @@ function ProductDetailsPage() {
                   </span>
                 )}
               </div>
+
+              {/* Review Stars Summary */}
+              {reviews?.length > 0 && (
+                <div 
+                  className="flex items-center gap-2 mb-6 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => setOpenAccordion("reviews")}
+                >
+                  <div className="flex items-center gap-0.5">
+                    <StarRatingComponent rating={averageReview} />
+                  </div>
+                  <span className="text-rosh-primary/60 text-xs tracking-wider">
+                    ({averageReview.toFixed(1)}) • {reviews.length} Review{reviews.length > 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
 
               {/* Minimal Trust Badges under Price */}
               <div className="flex flex-wrap items-center gap-4 text-xs tracking-widest uppercase text-rosh-primary/60 mb-6 border-b border-rosh-primary/10 pb-6">
@@ -342,6 +432,18 @@ function ProductDetailsPage() {
               <p className="text-rosh-primary/80 text-[15px] font-light mb-6 leading-relaxed max-w-xl">
                 {productDetails?.description}
               </p>
+
+              {sizeChartImage && (
+                <div className="mb-6">
+                  <Button 
+                    variant="link" 
+                    className="text-rosh-primary uppercase tracking-widest text-xs p-0 h-auto font-medium flex items-center gap-1.5"
+                    onClick={() => setSizeChartOpen(true)}
+                  >
+                    <Ruler className="w-3.5 h-3.5" /> Size Chart
+                  </Button>
+                </div>
+              )}
 
               {/* Color Variations */}
               {productDetails?.colors && productDetails.colors.length > 0 && (
@@ -477,7 +579,66 @@ function ProductDetailsPage() {
                   </div>
                 </AccordionItem>
 
+                <AccordionItem 
+                  title="Customer Reviews" 
+                  isOpen={openAccordion === "reviews"}
+                  onClick={() => toggleAccordion("reviews")}
+                >
+                  <div className="pt-4 flex flex-col gap-6">
+                    {/* Reviews List */}
+                    <div className="flex flex-col gap-6 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                      {reviews && reviews.length > 0 ? (
+                        reviews.map((reviewItem) => (
+                          <div className="flex gap-4" key={reviewItem._id}>
+                            <Avatar className="w-10 h-10 border border-rosh-primary/10 rounded-full flex items-center justify-center bg-rosh-primary/5">
+                              <AvatarFallback className="text-rosh-primary font-serif">
+                                {reviewItem?.userName[0].toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col gap-1">
+                              <h3 className="font-medium text-sm tracking-wide">{reviewItem?.userName}</h3>
+                              <div className="flex items-center gap-0.5">
+                                <StarRatingComponent rating={reviewItem?.reviewValue} />
+                              </div>
+                              <p className="text-rosh-primary/70 text-sm mt-1">
+                                {reviewItem.reviewMessage}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-rosh-primary/50 text-sm italic">No reviews yet. Be the first to review this product!</p>
+                      )}
+                    </div>
 
+                    {/* Write a Review */}
+                    <div className="mt-4 flex flex-col gap-4 border-t border-rosh-primary/10 pt-6">
+                      <Label className="text-sm uppercase tracking-widest text-rosh-primary">Write a Review</Label>
+                      <div className="flex gap-1">
+                        <StarRatingComponent
+                          rating={rating}
+                          handleRatingChange={handleRatingChange}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          name="reviewMsg"
+                          value={reviewMsg}
+                          onChange={(event) => setReviewMsg(event.target.value)}
+                          placeholder="Share your thoughts..."
+                          className="rounded-none border-rosh-primary/20 focus-visible:ring-0 focus-visible:border-rosh-primary"
+                        />
+                        <Button
+                          onClick={handleAddReview}
+                          disabled={reviewMsg.trim() === "" || rating === 0}
+                          className="rounded-none bg-rosh-primary text-rosh-background uppercase tracking-widest text-xs hover:bg-rosh-accent hover:text-rosh-background transition-colors"
+                        >
+                          Submit
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionItem>
               </div>
 
             </div>
@@ -497,6 +658,20 @@ function ProductDetailsPage() {
 
       <GoogleReviewsSection />
       <Footer />
+
+      {/* Size Chart Dialog */}
+      <Dialog open={sizeChartOpen} onOpenChange={setSizeChartOpen}>
+        <DialogContent className="sm:max-w-[700px] p-6 rounded-none bg-rosh-background border border-rosh-primary/10">
+          <DialogHeader>
+            <DialogTitle className="font-serif tracking-wide text-2xl mb-4 text-rosh-primary">Size Chart</DialogTitle>
+          </DialogHeader>
+          {sizeChartImage && (
+            <div className="flex justify-center items-center w-full overflow-hidden bg-rosh-primary/5">
+              <img src={sizeChartImage} alt="Size Chart" className="w-full h-auto object-contain max-h-[70vh]" />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
