@@ -83,50 +83,45 @@ function SearchProducts() {
   console.log(searchResults, "searchResults");
 
   return (
-    <div className="container mx-auto md:px-6 px-4 py-8">
-      {/* Search Bar Section */}
-      <div className="w-full flex items-center justify-center fixed top-12 left-0 px-4 py-6 z-10 bg-white">
-        <Input
-          value={keyword}
-          name="keyword"
-          onChange={(event) => setKeyword(event.target.value)}
-          className="py-6 w-full md:w-1/2 bg-white text-black border-2 border-gray-300"
-          placeholder="Search Products..."
-        />
+    <div className="min-h-screen bg-rosh-background flex flex-col">
+      {/* Elegant Hero Search Section */}
+      <div className="w-full flex flex-col items-center justify-center px-4 py-12 md:py-20 bg-rosh-primary/5 border-b border-rosh-primary/10">
+        <h1 className="font-serif text-3xl md:text-4xl text-rosh-primary mb-6 tracking-wide text-center">Search Our Collection</h1>
+        <div className="w-full max-w-2xl relative">
+          <Input
+            value={keyword}
+            name="keyword"
+            onChange={(event) => setKeyword(event.target.value)}
+            className="py-6 px-6 w-full bg-white text-rosh-primary border border-rosh-primary/20 rounded-none focus-visible:ring-1 focus-visible:ring-rosh-primary focus-visible:border-rosh-primary text-base md:text-lg font-light tracking-wide shadow-sm placeholder:text-rosh-primary/40"
+            placeholder="Search for rings, necklaces, diamonds..."
+          />
+        </div>
       </div>
 
-      {/* Container with Padding Adjustment for Fixed Search Bar */}
-      <div className="mt-28"> {/* Adjusted to give enough space below the fixed search bar */}
-        {/* Display 'No result found' when no search results are found */}
+      {/* Results Container */}
+      <div className="container mx-auto px-4 md:px-6 py-12 flex-1">
+        {/* Display 'No result found' */}
         {!searchResults.length && keyword && (
-          <div className="w-full flex justify-center mt-10">
-            <h1 className="text-5xl font-extrabold">No result found!</h1>
+          <div className="w-full flex flex-col items-center justify-center py-16 opacity-80">
+            <h2 className="text-2xl md:text-3xl font-serif text-rosh-primary tracking-wide mb-3">No results found</h2>
+            <p className="text-rosh-primary/60 font-light tracking-wide text-center">We couldn't find anything matching "{keyword}".</p>
           </div>
         )}
 
         {/* Display Product Grid Only If Search Results Exist */}
         {searchResults.length > 0 && (
-          <div className="overflow-y-auto max-h-screen mt-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {searchResults.map((item) => (
-                <ShoppingProductTile
-                  key={item.id}
-                  handleAddtoCart={handleAddtoCart}
-                  product={item}
-                  handleGetProductDetails={handleViewProductDetails} // Use navigate function here
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+            {searchResults.map((item) => (
+              <ShoppingProductTile
+                key={item.id}
+                handleAddtoCart={handleAddtoCart}
+                product={item}
+                handleGetProductDetails={handleViewProductDetails} 
+              />
+            ))}
           </div>
         )}
       </div>
-
-      {/* Product Details Dialog (Optional, If Needed) */}
-      {/* <ProductDetailsDialog
-        open={openDetailsDialog}
-        setOpen={setOpenDetailsDialog}
-        productDetails={productDetails}
-      /> */}
     </div>
   );
 }
