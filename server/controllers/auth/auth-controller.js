@@ -78,7 +78,11 @@ const loginUser = async (req, res) => {
     );
 
     // Set cookie directly in headers
-    const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+    const origin = req.headers.origin || '';
+    const isProd = process.env.NODE_ENV === 'production' || 
+                   (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https')) ||
+                   origin.startsWith('https://');
+    
     const sameSite = isProd ? 'None' : 'Lax';
     const secure = isProd ? '; Secure' : '';
     const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}${secure}`;
@@ -119,7 +123,11 @@ const loginUser = async (req, res) => {
 
 // Logout user
 const logoutUser = (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+  const origin = req.headers.origin || '';
+  const isProd = process.env.NODE_ENV === 'production' || 
+                 (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https')) ||
+                 origin.startsWith('https://');
+
   res.clearCookie("token", {
     path: "/",
     secure: isProd,

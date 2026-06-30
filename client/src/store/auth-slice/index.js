@@ -5,8 +5,14 @@ import { mergeTempCartWithServer } from "../shop/cart-slice";
 // Configure axios defaults
 const getBackendUrl = () => {
   const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:5000';
+  if (
+    hostname === 'localhost' || 
+    hostname === '127.0.0.1' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    hostname.startsWith('172.')
+  ) {
+    return `http://${hostname}:5000`;
   }
   return import.meta.env.VITE_API_URL || 'https://roshjewellery.onrender.com';
 };
