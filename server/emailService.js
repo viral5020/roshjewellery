@@ -79,7 +79,7 @@ const sendOrderConfirmationEmail = async (orderData) => {
     }
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'viralajudia123@gmail.com',
+      from: process.env.EMAIL_USER || 'roshfinejewellery@gmail.com',
       to: orderData.email,
       subject: 'Order Confirmation',
       html: `
@@ -184,7 +184,7 @@ const sendNewProductEmail = async (productData, userEmails) => {
     }
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'viralajudia123@gmail.com',
+      from: process.env.EMAIL_USER || 'roshfinejewellery@gmail.com',
       to: userEmails.join(','),
       subject: 'New Product Available!',
       html: `
