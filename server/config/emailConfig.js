@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: process.env.EMAIL_USER || 'viralajudia123@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'ohgz tzef heus zhsm',
+    user: process.env.EMAIL_USER || 'roshfinejewellery@gmail.com',
+    pass: process.env.EMAIL_PASSWORD || 'hyud cjri xqlm hpji',
   },
   tls: {
     rejectUnauthorized: false
@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verify transporter configuration
-transporter.verify(function(error, success) {
+transporter.verify(function (error, success) {
   if (error) {
     console.error('SMTP configuration error:', {
       message: error.message,
