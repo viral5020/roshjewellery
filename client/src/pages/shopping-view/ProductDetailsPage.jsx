@@ -67,6 +67,7 @@ function ProductDetailsPage() {
   const { toast } = useToast();
   
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
 
   const [reviewMsg, setReviewMsg] = useState("");
@@ -100,14 +101,22 @@ function ProductDetailsPage() {
 
 
   const currentCategory = categories.find(c => c.name === productDetails?.category);
-  const sizeChartImage = currentCategory?.sizeChartImage;
+  const currentSubcategory = subcategories.find(sc => sc.name === productDetails?.subcategory);
+  
+  // Priority: Subcategory size chart -> Category size chart
+  const sizeChartImage = currentSubcategory?.sizeChartImage || currentCategory?.sizeChartImage;
 
   useEffect(() => {
-    // Fetch categories to get size chart
+    // Fetch categories and subcategories to get size charts
     fetch("/api/categories")
       .then(res => res.json())
       .then(data => setCategories(data.categories || []))
       .catch(err => console.error("Error fetching categories:", err));
+
+    fetch("/api/subcategories")
+      .then(res => res.json())
+      .then(data => setSubcategories(data.subCategories || []))
+      .catch(err => console.error("Error fetching subcategories:", err));
   }, []);
 
   useEffect(() => {

@@ -11,6 +11,10 @@ const SubcategorySchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    sizeChartImage: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

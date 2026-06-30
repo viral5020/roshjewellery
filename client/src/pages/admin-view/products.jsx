@@ -66,6 +66,10 @@ function AdminProducts() {
   const [categoryFormData, setCategoryFormData] = useState(initialCategoryFormData);
   const [subCategoryFormData, setSubCategoryFormData] = useState(initialSubCategoryFormData);
 
+  const [uploadedSubSizeChartUrl, setUploadedSubSizeChartUrl] = useState("");
+  const [subSizeChartFile, setSubSizeChartFile] = useState(null);
+  const [subSizeChartLoading, setSubSizeChartLoading] = useState(false);
+
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState("");
@@ -663,7 +667,10 @@ function AdminProducts() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(subCategoryFormData), // Sends name and category ObjectId
+      body: JSON.stringify({
+        ...subCategoryFormData,
+        sizeChartImage: uploadedSubSizeChartUrl
+      }), // Sends name, category, sizeChartImage
     })
       .then((res) => res.json())
       .then((data) => {
@@ -671,6 +678,12 @@ function AdminProducts() {
           title: data.success ? "Subcategory created successfully" : "Error creating subcategory",
           description: data.message,
         });
+        if (data.success) {
+          setOpenCreateSubCategoryDialog(false);
+          setSubCategoryFormData(initialSubCategoryFormData);
+          setUploadedSubSizeChartUrl("");
+          setSubSizeChartFile(null);
+        }
       })
       .catch((err) => {
         toast({
@@ -961,6 +974,8 @@ function AdminProducts() {
   onOpenChange={() => {
     setOpenCreateSubCategoryDialog(false);
     setSubCategoryFormData(initialSubCategoryFormData);
+    setUploadedSubSizeChartUrl("");
+    setSubSizeChartFile(null);
   }}
 >
   <SheetContent side="right" className="overflow-auto">
@@ -970,6 +985,21 @@ function AdminProducts() {
     <div className="py-6">
       {/* Log the subCategoryFormData here to check the values */}
       {console.log(subCategoryFormData)}
+
+      <div className="mb-4">
+        <label className="text-sm font-medium mb-2 block">Size Chart Image (Optional)</label>
+        <ProductImageUpload
+          imageFile={subSizeChartFile}
+          setImageFile={setSubSizeChartFile}
+          uploadedImageUrl={uploadedSubSizeChartUrl}
+          setUploadedImageUrl={setUploadedSubSizeChartUrl}
+          setImageLoadingState={setSubSizeChartLoading}
+          imageLoadingState={subSizeChartLoading}
+          isEditMode={!!uploadedSubSizeChartUrl}
+          showSubImages={false}
+          label="Size Chart Image"
+        />
+      </div>
 
       <CommonForm
         onSubmit={onSubCategorySubmit}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ProductImageUpload from "@/components/admin-view/image-upload";
 
 // Function to fetch categories asynchronously
 async function fetchCategories() {
@@ -23,13 +24,13 @@ async function deleteSubCategory(id) {
 }
 
 // Function to update subcategory
-async function updateSubCategory(id, name, category) {
+async function updateSubCategory(id, name, category, sizeChartImage) {
   const response = await fetch(`/api/subcategories/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, category }),
+    body: JSON.stringify({ name, category, sizeChartImage }),
   });
   return response.json();
 }
@@ -42,6 +43,9 @@ const SubCategoryPage = () => {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editSubCategory, setEditSubCategory] = useState(null);
+  const [sizeChartFile, setSizeChartFile] = useState(null);
+  const [uploadedSizeChartUrl, setUploadedSizeChartUrl] = useState("");
+  const [imageLoadingState, setImageLoadingState] = useState(false);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -104,6 +108,8 @@ const SubCategoryPage = () => {
   const handleEdit = (subCategory) => {
     setIsEditing(true);
     setEditSubCategory(subCategory);
+    setUploadedSizeChartUrl(subCategory.sizeChartImage || "");
+    setSizeChartFile(null);
   };
 
   // Handle update subcategory
@@ -111,11 +117,13 @@ const SubCategoryPage = () => {
     event.preventDefault();
     const { name, category } = event.target;
     try {
-      const result = await updateSubCategory(editSubCategory._id, name.value, category.value);
+      const result = await updateSubCategory(editSubCategory._id, name.value, category.value, uploadedSizeChartUrl);
       if (result.success) {
         setSubCategories(subCategories.map(sub => (sub._id === editSubCategory._id ? result.subCategory : sub)));
         setIsEditing(false);
         setEditSubCategory(null);
+        setUploadedSizeChartUrl("");
+        setSizeChartFile(null);
       } else {
         setError('Failed to update subcategory');
       }
@@ -221,7 +229,9 @@ const SubCategoryPage = () => {
   const modalContentStyle = {
     backgroundColor: '#fff',
     padding: '30px',
-    width: '500px',
+    width: '600px', // slightly wider for image upload
+    maxHeight: '90vh',
+    overflowY: 'auto',
     borderRadius: '8px',
     boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.1)',
   };
@@ -365,7 +375,23 @@ const SubCategoryPage = () => {
                   ))}
                 </select>
               </div>
-              <button style={submitButtonStyle} type="submit">Update</button>
+              <div style={{ marginBottom: "20px", marginTop: "20px" }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Size Chart Image (Optional)</label>
+                <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '6px' }}>
+                  <ProductImageUpload
+                    imageFile={sizeChartFile}
+                    setImageFile={setSizeChartFile}
+                    uploadedImageUrl={uploadedSizeChartUrl}
+                    setUploadedImageUrl={setUploadedSizeChartUrl}
+                    setImageLoadingState={setImageLoadingState}
+                    imageLoadingState={imageLoadingState}
+                    isEditMode={!!uploadedSizeChartUrl}
+                    showSubImages={false}
+                    label="Size Chart Image"
+                  />
+                </div>
+              </div>
+              <button style={submitButtonStyle} type="submit" disabled={imageLoadingState}>Update</button>
               <button
                 style={cancelButtonStyle}
                 type="button"
