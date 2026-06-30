@@ -175,7 +175,9 @@ const editProduct = async (req, res) => {
       purity,
       labourCost,
       diamondPrice,
-      diamondColor
+      diamondColor,
+      isBestSeller,
+      isNewArrival
     } = req.body;
 
     console.log("Received subImages for edit:", subImages); // Debug log
@@ -208,6 +210,8 @@ const editProduct = async (req, res) => {
     findProduct.labourCost = labourCost !== undefined ? Number(labourCost || 0) : findProduct.labourCost;
     findProduct.diamondPrice = diamondPrice !== undefined ? Number(diamondPrice || 0) : findProduct.diamondPrice;
     findProduct.diamondColor = diamondColor !== undefined ? diamondColor : findProduct.diamondColor;
+    findProduct.isBestSeller = isBestSeller !== undefined ? isBestSeller : findProduct.isBestSeller;
+    findProduct.isNewArrival = isNewArrival !== undefined ? isNewArrival : findProduct.isNewArrival;
 
     // Auto-calculate price if metalType is gold or silver
     if ((findProduct.metalType === "gold" || findProduct.metalType === "silver") && findProduct.gramWeight > 0) {

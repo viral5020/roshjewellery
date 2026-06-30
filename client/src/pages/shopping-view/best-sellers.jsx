@@ -69,7 +69,7 @@ function BestSellers() {
     return (price * exchangeRates[currency]).toFixed(2);
   };
 
-  const bestSellers = productList && productList.length > 0 ? productList.slice(0, 4) : [];
+  const bestSellers = productList ? productList.filter((product) => product.isBestSeller) : [];
 
   return (
     <div className="bg-rosh-background md:min-h-screen text-rosh-primary font-sans flex flex-col">

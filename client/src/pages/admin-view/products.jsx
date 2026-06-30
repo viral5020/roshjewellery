@@ -381,6 +381,22 @@ function AdminProducts() {
     });
   }
 
+  function handleToggleStatus(id, field, value) {
+    dispatch(
+      editProduct({
+        id,
+        formData: { [field]: value },
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts());
+        toast({
+          title: "Product updated successfully",
+        });
+      }
+    });
+  }
+
   function isFormValid() {
     const requiredFields = ["title", "description", "category", "subcategory", "gramWeight"];
     const textFieldsValid = requiredFields.every((key) => {
@@ -738,6 +754,7 @@ function AdminProducts() {
               setCurrentEditedId={setCurrentEditedId}
               handleDelete={handleDelete}
               setSubImages={setSubImages}
+              handleToggleStatus={handleToggleStatus}
             />
           ))
         ) : (

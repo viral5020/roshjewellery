@@ -69,7 +69,7 @@ function NewArrivals() {
     return (price * exchangeRates[currency]).toFixed(2);
   };
 
-  const newArrivals = productList && productList.length > 0 ? productList.slice(4, 10) : [];
+  const newArrivals = productList ? productList.filter((product) => product.isNewArrival) : [];
 
   return (
     <div className="bg-rosh-background md:min-h-screen text-rosh-primary font-sans flex flex-col">

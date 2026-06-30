@@ -37,6 +37,14 @@ const ProductSchema = new mongoose.Schema(
       default: 0
     },
     diamondColor: String,
+    isBestSeller: {
+      type: Boolean,
+      default: false
+    },
+    isNewArrival: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

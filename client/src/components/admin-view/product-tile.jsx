@@ -1,5 +1,6 @@
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 function AdminProductTile({
   product,
@@ -8,6 +9,7 @@ function AdminProductTile({
   setCurrentEditedId,
   handleDelete,
   setSubImages,
+  handleToggleStatus,
 }) {
   return (
     <Card className="w-full max-w-sm mx-auto"> 
@@ -39,6 +41,26 @@ function AdminProductTile({
               <span className="text-lg font-bold">₹{product?.salePrice}</span>
             ) : null}
           </div>
+
+          {/* Quick Toggles */}
+          {handleToggleStatus && (
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+              <Badge 
+                className="cursor-pointer select-none"
+                variant={product?.isBestSeller ? "default" : "outline"}
+                onClick={() => handleToggleStatus(product._id, 'isBestSeller', !product?.isBestSeller)}
+              >
+                Best Seller
+              </Badge>
+              <Badge 
+                className="cursor-pointer select-none"
+                variant={product?.isNewArrival ? "default" : "outline"}
+                onClick={() => handleToggleStatus(product._id, 'isNewArrival', !product?.isNewArrival)}
+              >
+                New Arrival
+              </Badge>
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <Button

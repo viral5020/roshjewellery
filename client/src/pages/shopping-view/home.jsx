@@ -128,12 +128,12 @@ function ShoppingHome() {
     return (price * exchangeRates[currency]).toFixed(2);
   };
 
-  const bestSellers = productList && productList.length > 0 ? productList.slice(0, 4) : [];
-  const newArrivals = productList && productList.length > 0 ? productList.slice(4, 10) : [];
+  const bestSellers = productList ? productList.filter((product) => product.isBestSeller) : [];
+  const newArrivals = productList ? productList.filter((product) => product.isNewArrival) : [];
 
   // Dynamic images from product list to avoid stock photos
   const dynamicGalleryImages = productList && productList.length > 0
-    ? productList.slice(0, 4).map(p => p.image)
+    ? bestSellers.map(p => p.image)
     : [heroImage, heroImage, heroImage, heroImage];
 
   const getImageFor = (keyword, defaultIndex) => {
