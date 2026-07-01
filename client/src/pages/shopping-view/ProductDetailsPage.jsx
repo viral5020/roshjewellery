@@ -670,15 +670,19 @@ function ProductDetailsPage() {
 
       {/* Size Chart Dialog */}
       <Dialog open={sizeChartOpen} onOpenChange={setSizeChartOpen}>
-        <DialogContent className="sm:max-w-[700px] p-6 rounded-none bg-rosh-background border border-rosh-primary/10">
-          <DialogHeader>
-            <DialogTitle className="font-serif tracking-wide text-2xl mb-4 text-rosh-primary">Size Chart</DialogTitle>
-          </DialogHeader>
-          {sizeChartImage && (
-            <div className="flex justify-center items-center w-full overflow-hidden bg-rosh-primary/5">
-              <img src={sizeChartImage} alt="Size Chart" className="w-full h-auto object-contain max-h-[70vh]" />
-            </div>
-          )}
+        <DialogContent className="max-w-fit p-0 border-none shadow-none bg-transparent [&>button]:hidden">
+          <div className="size-guide-content relative bg-white" bis_skin_checked="1">
+            <span 
+              id="close-size-guide" 
+              className="absolute top-2 right-4 text-4xl cursor-pointer text-gray-500 hover:text-black z-10 leading-none"
+              onClick={() => setSizeChartOpen(false)}
+            >
+              &times;
+            </span>
+            {sizeChartImage && (
+              <img src={sizeChartImage} alt="Size Chart" className="w-auto h-auto max-h-[90vh] block object-contain" />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

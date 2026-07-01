@@ -144,22 +144,29 @@ function ShoppingHome() {
     return item?.image || (productList && productList.length > defaultIndex ? productList[defaultIndex].image : heroImage);
   };
 
-  const categories = [
-    { id: 'earrings', label: 'Earrings', image: getImageFor('earring', 1) },
-    { id: 'pendants', label: 'Pendants', image: getImageFor('pendant', 2) },
-    { id: 'rings', label: 'Rings', image: getImageFor('ring', 3) },
-    { id: 'cuffs', label: 'Cuffs', image: getImageFor('cuff', 4) },
-    { id: 'bracelets', label: 'Bracelets', image: getImageFor('bracelet', 5) },
-    { id: 'chains', label: 'Chains', image: getImageFor('chain', 6) },
-    { id: 'cufflinks', label: 'Cufflinks', image: getImageFor('link', 7) },
-    { id: 'anklets', label: 'Anklets', image: getImageFor('anklet', 8) },
-  ];
+  const categories = dbSubcategories.length > 0 
+    ? dbSubcategories.map((sub, index) => ({
+        id: sub._id,
+        label: sub.name,
+        image: sub.image || getImageFor(sub.name.toLowerCase(), index + 1) || heroImage
+      }))
+    : [
+        { id: 'earrings', label: 'Earrings', image: getImageFor('earring', 1) },
+        { id: 'pendants', label: 'Pendants', image: getImageFor('pendant', 2) },
+        { id: 'rings', label: 'Rings', image: getImageFor('ring', 3) },
+        { id: 'cuffs', label: 'Cuffs', image: getImageFor('cuff', 4) },
+        { id: 'bracelets', label: 'Bracelets', image: getImageFor('bracelet', 5) },
+        { id: 'chains', label: 'Chains', image: getImageFor('chain', 6) },
+        { id: 'cufflinks', label: 'Cufflinks', image: getImageFor('link', 7) },
+        { id: 'anklets', label: 'Anklets', image: getImageFor('anklet', 8) },
+      ];
 
-  const storyImg = productList && productList.length > 3 ? productList[3].image : heroImage;
+  const aboutUsImages = featureImageList?.filter(img => img.type === 'aboutUs') || [];
+  const storyImgFallback = productList && productList.length > 3 ? productList[3].image : heroImage;
 
   return (
     <div className="flex flex-col min-h-screen bg-rosh-background text-rosh-primary overflow-x-hidden font-sans">
-
+      
       {/* 1. Premium Hero Section */}
       <section className="relative w-full h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-rosh-primary">
@@ -292,10 +299,14 @@ function ShoppingHome() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="md:w-1/2"
+            className="md:w-1/2 flex overflow-x-auto snap-x hide-scrollbar gap-4"
           >
-            {storyImg && (
-              <img src={storyImg} alt="Brand Craftsmanship" className="w-full h-auto aspect-[4/5] object-cover opacity-90" />
+            {aboutUsImages.length > 0 ? (
+              aboutUsImages.map((img) => (
+                <img key={img._id} src={img.image} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
+              ))
+            ) : storyImgFallback && (
+              <img src={storyImgFallback} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
             )}
           </motion.div>
           <motion.div

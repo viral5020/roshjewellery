@@ -196,25 +196,60 @@ export const addProductFormElements = [
     ],
   },
   {
-    label: "Diamond Carat",
-    name: "diamondCarat",
-    componentType: "input",
-    type: "number",
-    placeholder: "Enter diamond carat",
+    name: "diamondCaratPriceRow",
+    componentType: "row",
+    controls: [
+      {
+        label: "Diamond Carat",
+        name: "diamondCarat",
+        componentType: "input",
+        type: "number",
+        placeholder: "Enter diamond carat",
+      },
+      {
+        label: "Per Carat Price",
+        name: "diamondPerCaratPrice",
+        componentType: "input",
+        type: "number",
+        placeholder: "Enter price per carat",
+      },
+    ],
   },
   {
-    label: "Diamond Price",
+    label: "Diamond Price (Auto-calculated)",
     name: "diamondPrice",
     componentType: "input",
     type: "number",
-    placeholder: "Enter diamond price",
+    placeholder: "Calculated automatically",
   },
   {
-    label: "Diamond Color",
-    name: "diamondColor",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter diamond color",
+    name: "diamondColorClarityRow",
+    componentType: "row",
+    controls: [
+      {
+        label: "Diamond Color",
+        name: "diamondColor",
+        componentType: "select",
+        options: [
+          { id: "De", label: "De" },
+          { id: "Ef", label: "Ef" },
+          { id: "Fg", label: "Fg" },
+          { id: "Gh", label: "Gh" },
+          { id: "Hi", label: "Hi" },
+          { id: "Jk", label: "Jk" },
+        ],
+      },
+      {
+        label: "Diamond Clarity",
+        name: "diamondClarity",
+        componentType: "select",
+        options: [
+          { id: "Vvs vs", label: "Vvs vs" },
+          { id: "Vs si", label: "Vs si" },
+          { id: "Si I1", label: "Si I1" },
+        ],
+      },
+    ],
   },
 ];
 

@@ -21,6 +21,7 @@ exports.createSubCategory = async (req, res) => {
       name,
       category, // category should be the ObjectId
       sizeChartImage: sizeChartImage || null,
+      image: req.body.image || null,
     });
 
     await newSubCategory.save();
@@ -83,11 +84,11 @@ exports.deleteSubCategory = async (req, res) => {
 // Update a subcategory by ID
 exports.updateSubCategory = async (req, res) => {
   const { id } = req.params;
-  const { name, category, sizeChartImage } = req.body;
+  const { name, category, sizeChartImage, image } = req.body;
 
   try {
     // Find subcategory and update
-    const updatedSubCategory = await SubCategory.findByIdAndUpdate(id, { name, category, sizeChartImage }, { new: true });
+    const updatedSubCategory = await SubCategory.findByIdAndUpdate(id, { name, category, sizeChartImage, image }, { new: true });
 
     if (!updatedSubCategory) {
       return res.status(404).json({ success: false, message: 'Subcategory not found' });

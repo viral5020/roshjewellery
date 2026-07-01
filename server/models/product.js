@@ -36,7 +36,12 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+    diamondPerCaratPrice: {
+      type: Number,
+      default: 0
+    },
     diamondColor: String,
+    diamondClarity: String,
     isBestSeller: {
       type: Boolean,
       default: false

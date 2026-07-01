@@ -41,7 +41,9 @@ const initialFormData = {
   gramWeight: "",
   diamondCarat: "",
   diamondPrice: "",
+  diamondPerCaratPrice: "",
   diamondColor: "",
+  diamondClarity: "",
   colors: [],
   colorImages: [],
   video: "",
@@ -190,12 +192,13 @@ function AdminProducts() {
   const dispatch = useDispatch();
   const { toast } = useToast();
   
-  // Auto-calculate diamond price based on carats and global price per carat
+  // Auto-calculate diamond price based on carats and form's price per carat
   useEffect(() => {
-    if (formData.diamondCarat && diamondPricePerCarat) {
+    if (formData.diamondCarat && formData.diamondPerCaratPrice) {
       const carat = parseFloat(formData.diamondCarat);
-      if (!isNaN(carat)) {
-        const calculatedPrice = (carat * diamondPricePerCarat).toFixed(2);
+      const pricePerCarat = parseFloat(formData.diamondPerCaratPrice);
+      if (!isNaN(carat) && !isNaN(pricePerCarat)) {
+        const calculatedPrice = (carat * pricePerCarat).toFixed(2);
         if (formData.diamondPrice !== calculatedPrice && formData.diamondPrice !== calculatedPrice.toString()) {
           setFormData(prev => ({
             ...prev,
@@ -204,7 +207,7 @@ function AdminProducts() {
         }
       }
     }
-  }, [formData.diamondCarat, diamondPricePerCarat]);
+  }, [formData.diamondCarat, formData.diamondPerCaratPrice]);
   
 
   // Function to fetch and update category options
@@ -268,8 +271,10 @@ function AdminProducts() {
           diamondType: product.diamondType || "",
           gramWeight: product.gramWeight?.toString() || "",
           diamondCarat: product.diamondCarat?.toString() || "",
+          diamondPerCaratPrice: product.diamondPerCaratPrice?.toString() || "",
           diamondPrice: product.diamondPrice?.toString() || "",
           diamondColor: product.diamondColor || "",
+          diamondClarity: product.diamondClarity || "",
           colors: Array.isArray(product.colors) ? product.colors : [],
           colorImages: Array.isArray(product.colorImages) ? product.colorImages : [],
           video: product.video || "",
@@ -335,7 +340,9 @@ function AdminProducts() {
       gramWeight: parseFloat(formData.gramWeight) || 0,
       labourCost: parseFloat(formData.labourCost) || 0,
       diamondCarat: parseFloat(formData.diamondCarat) || 0,
+      diamondPerCaratPrice: parseFloat(formData.diamondPerCaratPrice) || 0,
       diamondPrice: parseFloat(formData.diamondPrice) || 0,
+      diamondClarity: formData.diamondClarity,
     };
 
     console.log('Submitting product data:', productData); // Debug log

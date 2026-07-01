@@ -24,13 +24,13 @@ async function deleteSubCategory(id) {
 }
 
 // Function to update subcategory
-async function updateSubCategory(id, name, category, sizeChartImage) {
+async function updateSubCategory(id, name, category, sizeChartImage, image) {
   const response = await fetch(`/api/subcategories/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, category, sizeChartImage }),
+    body: JSON.stringify({ name, category, sizeChartImage, image }),
   });
   return response.json();
 }
@@ -45,6 +45,8 @@ const SubCategoryPage = () => {
   const [editSubCategory, setEditSubCategory] = useState(null);
   const [sizeChartFile, setSizeChartFile] = useState(null);
   const [uploadedSizeChartUrl, setUploadedSizeChartUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
 
   // Fetch categories on component mount
@@ -110,6 +112,8 @@ const SubCategoryPage = () => {
     setEditSubCategory(subCategory);
     setUploadedSizeChartUrl(subCategory.sizeChartImage || "");
     setSizeChartFile(null);
+    setUploadedImageUrl(subCategory.image || "");
+    setImageFile(null);
   };
 
   // Handle update subcategory
@@ -117,13 +121,15 @@ const SubCategoryPage = () => {
     event.preventDefault();
     const { name, category } = event.target;
     try {
-      const result = await updateSubCategory(editSubCategory._id, name.value, category.value, uploadedSizeChartUrl);
+      const result = await updateSubCategory(editSubCategory._id, name.value, category.value, uploadedSizeChartUrl, uploadedImageUrl);
       if (result.success) {
         setSubCategories(subCategories.map(sub => (sub._id === editSubCategory._id ? result.subCategory : sub)));
         setIsEditing(false);
         setEditSubCategory(null);
         setUploadedSizeChartUrl("");
         setSizeChartFile(null);
+        setUploadedImageUrl("");
+        setImageFile(null);
       } else {
         setError('Failed to update subcategory');
       }
@@ -376,6 +382,21 @@ const SubCategoryPage = () => {
                 </select>
               </div>
               <div style={{ marginBottom: "20px", marginTop: "20px" }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Subcategory Image (Optional)</label>
+                <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '6px', marginBottom: '15px' }}>
+                  <ProductImageUpload
+                    imageFile={imageFile}
+                    setImageFile={setImageFile}
+                    uploadedImageUrl={uploadedImageUrl}
+                    setUploadedImageUrl={setUploadedImageUrl}
+                    setImageLoadingState={setImageLoadingState}
+                    imageLoadingState={imageLoadingState}
+                    isEditMode={!!uploadedImageUrl}
+                    showSubImages={false}
+                    label="Subcategory Image"
+                  />
+                </div>
+                
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Size Chart Image (Optional)</label>
                 <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '6px' }}>
                   <ProductImageUpload

@@ -128,12 +128,26 @@ function CommonForm({
   return (
     <form onSubmit={onSubmit}>
       <div className="flex flex-col gap-3">
-        {formControls.map((controlItem) => (
-          <div className="grid w-full gap-1.5" key={controlItem.name}>
-            <Label className="mb-1">{controlItem.label}</Label>
-            {renderInputsByComponentType(controlItem)}
-          </div>
-        ))}
+        {formControls.map((controlItem) => {
+          if (controlItem.componentType === "row") {
+            return (
+              <div className="flex gap-4 w-full" key={controlItem.name || Math.random()}>
+                {controlItem.controls.map((childControl) => (
+                  <div className="grid w-full gap-1.5 flex-1" key={childControl.name}>
+                    <Label className="mb-1">{childControl.label}</Label>
+                    {renderInputsByComponentType(childControl)}
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          return (
+            <div className="grid w-full gap-1.5" key={controlItem.name}>
+              <Label className="mb-1">{controlItem.label}</Label>
+              {renderInputsByComponentType(controlItem)}
+            </div>
+          );
+        })}
         {children}
       </div>
       <Button disabled={isBtnDisabled} type="submit" className="mt-2 w-full">
