@@ -48,7 +48,7 @@ function ShoppingHome() {
   useEffect(() => {
     fetch('/api/subcategories')
       .then(res => res.json())
-      .then(data => setDbSubcategories(data.subCategories || []))
+      .then(data => setDbSubcategories(data.subcategories || []))
       .catch(console.error);
   }, []);
 
@@ -135,55 +135,38 @@ function ShoppingHome() {
   const dynamicGalleryImages = productList && productList.length > 0
     ? bestSellers.map(p => p.image)
     : [heroImage, heroImage, heroImage, heroImage];
-
-  const getImageFor = (keyword, defaultIndex) => {
-    const item = productList?.find(p =>
-      p.category?.toLowerCase().includes(keyword) ||
-      p.title?.toLowerCase().includes(keyword)
-    );
-    return item?.image || (productList && productList.length > defaultIndex ? productList[defaultIndex].image : heroImage);
+  const getCuratedFeatureImage = (categoryType) => {
+    return featureImageList?.find(img => img.type === categoryType)?.image;
   };
 
   const staticImages = {
-    earring: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
-    pendant: "https://images.unsplash.com/photo-1602752250012-32a1ebcb78df?q=80&w=1000&auto=format&fit=crop",
-    ring: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?q=80&w=1000&auto=format&fit=crop",
-    cuff: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=1000&auto=format&fit=crop",
-    bracelet: "https://images.unsplash.com/photo-1573408301145-b98c465446a8?q=80&w=1000&auto=format&fit=crop",
-    chain: "https://images.unsplash.com/photo-1599643478524-fb66f7ca0f80?q=80&w=1000&auto=format&fit=crop",
-    link: "https://images.unsplash.com/photo-1634840884242-20ad51a7be47?q=80&w=1000&auto=format&fit=crop",
-    anklet: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
+    earring: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600",
+    pendant: "https://images.unsplash.com/photo-1599643478518-a854e5da4cfa?q=80&w=600",
+    ring: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600",
+    cuff: "https://images.unsplash.com/photo-1611652022419-a9419f74a43d?q=80&w=600",
+    bracelet: "https://images.unsplash.com/photo-1611591430281-7c3e2b196a68?q=80&w=600",
+    chain: "https://images.unsplash.com/photo-1599643478518-a854e5da4cfa?q=80&w=600",
+    link: "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?q=80&w=600",
+    anklet: "https://images.unsplash.com/photo-1573408301185-98516138618a?q=80&w=600",
   };
 
-  const getFallbackImage = (keyword, index) => {
-    const key = Object.keys(staticImages).find(k => keyword.includes(k) || k.includes(keyword));
-    if (key) return staticImages[key];
-    return Object.values(staticImages)[index % Object.values(staticImages).length];
-  };
-
-  const categories = dbSubcategories.length > 0 
-    ? dbSubcategories.map((sub, index) => ({
-        id: sub._id,
-        label: sub.name,
-        image: sub.image || getFallbackImage(sub.name.toLowerCase(), index)
-      }))
-    : [
-        { id: 'earrings', label: 'Earrings', image: staticImages.earring },
-        { id: 'pendants', label: 'Pendants', image: staticImages.pendant },
-        { id: 'rings', label: 'Rings', image: staticImages.ring },
-        { id: 'cuffs', label: 'Cuffs', image: staticImages.cuff },
-        { id: 'bracelets', label: 'Bracelets', image: staticImages.bracelet },
-        { id: 'chains', label: 'Chains', image: staticImages.chain },
-        { id: 'cufflinks', label: 'Cufflinks', image: staticImages.link },
-        { id: 'anklets', label: 'Anklets', image: staticImages.anklet },
-      ];
+  const categories = [
+    { id: 'earrings', label: 'Earrings', image: getCuratedFeatureImage('curated_earrings') || staticImages.earring },
+    { id: 'pendants', label: 'Pendants', image: getCuratedFeatureImage('curated_pendants') || staticImages.pendant },
+    { id: 'rings', label: 'Rings', image: getCuratedFeatureImage('curated_rings') || staticImages.ring },
+    { id: 'cuffs', label: 'Cuffs', image: getCuratedFeatureImage('curated_cuffs') || staticImages.cuff },
+    { id: 'bracelets', label: 'Bracelets', image: getCuratedFeatureImage('curated_bracelets') || staticImages.bracelet },
+    { id: 'chains', label: 'Chains', image: getCuratedFeatureImage('curated_chains') || staticImages.chain },
+    { id: 'cufflinks', label: 'Cufflinks', image: getCuratedFeatureImage('curated_cufflinks') || staticImages.link },
+    { id: 'anklets', label: 'Anklets', image: getCuratedFeatureImage('curated_anklets') || staticImages.anklet },
+  ];
 
   const aboutUsImages = featureImageList?.filter(img => img.type === 'aboutUs') || [];
   const storyImgFallback = productList && productList.length > 3 ? productList[3].image : heroImage;
 
   return (
     <div className="flex flex-col min-h-screen bg-rosh-background text-rosh-primary overflow-x-hidden font-sans">
-      
+
       {/* 1. Premium Hero Section */}
       <section className="relative w-full h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-rosh-primary">
@@ -338,7 +321,7 @@ function ShoppingHome() {
             <p className="text-rosh-background/80 mb-8 font-light leading-relaxed">
               Every piece of Rosh fine jewellery is a testament to extraordinary craftsmanship and timeless design. We believe in creating pieces that transcend seasons—modern heirlooms crafted with ethically sourced materials designed to be cherished for generations.
             </p>
-            <button 
+            <button
               onClick={() => navigate('/shop/custom')}
               className="self-start pb-2 border-b border-rosh-highlight text-rosh-highlight uppercase tracking-widest text-xs hover:text-rosh-background hover:border-rosh-background transition-colors duration-300"
             >

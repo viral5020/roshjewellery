@@ -5,8 +5,19 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+
+const CURATED_CATEGORIES = [
+  { id: 'earrings', label: 'Earrings', type: 'curated_earrings' },
+  { id: 'pendants', label: 'Pendants', type: 'curated_pendants' },
+  { id: 'rings', label: 'Rings', type: 'curated_rings' },
+  { id: 'cuffs', label: 'Cuffs', type: 'curated_cuffs' },
+  { id: 'bracelets', label: 'Bracelets', type: 'curated_bracelets' },
+  { id: 'chains', label: 'Chains', type: 'curated_chains' },
+  { id: 'cufflinks', label: 'Cufflinks', type: 'curated_cufflinks' },
+  { id: 'anklets', label: 'Anklets', type: 'curated_anklets' },
+];
 
 function AdminDashboard() {
   const [imageFile, setImageFile] = useState(null);
@@ -20,6 +31,7 @@ function AdminDashboard() {
 
   const aboutUsImages = featureImageList ? featureImageList.filter(img => img.type === 'aboutUs') : [];
   const bannerImages = featureImageList ? featureImageList.filter(img => !img.type || img.type === 'banner') : [];
+  const curatedImages = featureImageList ? featureImageList.filter(img => img.type?.startsWith('curated_')) : [];
 
   function handleUploadFeatureImage() {
     if (imageType === 'aboutUs' && aboutUsImages.length >= 5) {
@@ -29,6 +41,18 @@ function AdminDashboard() {
         variant: "destructive"
       });
       return;
+    }
+
+    if (imageType.startsWith('curated_')) {
+      const existing = featureImageList.find(img => img.type === imageType);
+      if (existing) {
+        toast({
+          title: "Image already exists",
+          description: "You have already uploaded an image for this category. Please delete it first.",
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
     dispatch(addFeatureImage({ image: uploadedImageUrl, type: imageType })).then((data) => {
@@ -68,6 +92,14 @@ function AdminDashboard() {
             <SelectContent>
               <SelectItem value="banner">Banner Image</SelectItem>
               <SelectItem value="aboutUs">About Us Section (Max 5)</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Curated by Form Categories</SelectLabel>
+                {CURATED_CATEGORIES.map(cat => (
+                  <SelectItem key={cat.type} value={cat.type}>
+                    Curated: {cat.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
@@ -86,7 +118,7 @@ function AdminDashboard() {
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div>
           <h2 className="text-xl font-bold mb-4">Banner Images</h2>
           <div className="flex flex-col gap-4">
@@ -94,7 +126,7 @@ function AdminDashboard() {
               <div className="relative group" key={featureImgItem._id}>
                 <img
                   src={featureImgItem.image}
-                  className="w-full h-[200px] object-cover rounded-lg shadow-sm border border-gray-100"
+                  className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
                 />
                 <Button
                   variant="destructive"
@@ -116,7 +148,7 @@ function AdminDashboard() {
               <div className="relative group" key={featureImgItem._id}>
                 <img
                   src={featureImgItem.image}
-                  className="w-full h-[200px] object-cover rounded-lg shadow-sm border border-gray-100"
+                  className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
                 />
                 <Button
                   variant="destructive"
@@ -130,9 +162,37 @@ function AdminDashboard() {
             )) : <p className="text-gray-500">No about us images uploaded yet.</p>}
           </div>
         </div>
+
+        <div>
+          <h2 className="text-xl font-bold mb-4">Curated Categories</h2>
+          <div className="flex flex-col gap-4">
+            {curatedImages.length > 0 ? curatedImages.map((featureImgItem) => (
+              <div className="relative group" key={featureImgItem._id}>
+                <img
+                  src={featureImgItem.image}
+                  className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none">
+                  <span className="text-white font-medium uppercase tracking-wider text-sm">
+                    {featureImgItem.type.replace('curated_', '')}
+                  </span>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  onClick={() => handleDeleteFeatureImage(featureImgItem._id)}
+                >
+                  <Trash className="w-4 h-4" />
+                </Button>
+              </div>
+            )) : <p className="text-gray-500">No curated category images uploaded yet.</p>}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 export default AdminDashboard;
+
