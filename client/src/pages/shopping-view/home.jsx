@@ -48,7 +48,7 @@ function ShoppingHome() {
   useEffect(() => {
     fetch('/api/subcategories')
       .then(res => res.json())
-      .then(data => setDbSubcategories(data.subcategories || []))
+      .then(data => setDbSubcategories(data.subCategories || []))
       .catch(console.error);
   }, []);
 
@@ -144,21 +144,38 @@ function ShoppingHome() {
     return item?.image || (productList && productList.length > defaultIndex ? productList[defaultIndex].image : heroImage);
   };
 
+  const staticImages = {
+    earring: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1000&auto=format&fit=crop",
+    pendant: "https://images.unsplash.com/photo-1602752250012-32a1ebcb78df?q=80&w=1000&auto=format&fit=crop",
+    ring: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?q=80&w=1000&auto=format&fit=crop",
+    cuff: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=1000&auto=format&fit=crop",
+    bracelet: "https://images.unsplash.com/photo-1573408301145-b98c465446a8?q=80&w=1000&auto=format&fit=crop",
+    chain: "https://images.unsplash.com/photo-1599643478524-fb66f7ca0f80?q=80&w=1000&auto=format&fit=crop",
+    link: "https://images.unsplash.com/photo-1634840884242-20ad51a7be47?q=80&w=1000&auto=format&fit=crop",
+    anklet: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop",
+  };
+
+  const getFallbackImage = (keyword, index) => {
+    const key = Object.keys(staticImages).find(k => keyword.includes(k) || k.includes(keyword));
+    if (key) return staticImages[key];
+    return Object.values(staticImages)[index % Object.values(staticImages).length];
+  };
+
   const categories = dbSubcategories.length > 0 
     ? dbSubcategories.map((sub, index) => ({
         id: sub._id,
         label: sub.name,
-        image: sub.image || getImageFor(sub.name.toLowerCase(), index + 1) || heroImage
+        image: sub.image || getFallbackImage(sub.name.toLowerCase(), index)
       }))
     : [
-        { id: 'earrings', label: 'Earrings', image: getImageFor('earring', 1) },
-        { id: 'pendants', label: 'Pendants', image: getImageFor('pendant', 2) },
-        { id: 'rings', label: 'Rings', image: getImageFor('ring', 3) },
-        { id: 'cuffs', label: 'Cuffs', image: getImageFor('cuff', 4) },
-        { id: 'bracelets', label: 'Bracelets', image: getImageFor('bracelet', 5) },
-        { id: 'chains', label: 'Chains', image: getImageFor('chain', 6) },
-        { id: 'cufflinks', label: 'Cufflinks', image: getImageFor('link', 7) },
-        { id: 'anklets', label: 'Anklets', image: getImageFor('anklet', 8) },
+        { id: 'earrings', label: 'Earrings', image: staticImages.earring },
+        { id: 'pendants', label: 'Pendants', image: staticImages.pendant },
+        { id: 'rings', label: 'Rings', image: staticImages.ring },
+        { id: 'cuffs', label: 'Cuffs', image: staticImages.cuff },
+        { id: 'bracelets', label: 'Bracelets', image: staticImages.bracelet },
+        { id: 'chains', label: 'Chains', image: staticImages.chain },
+        { id: 'cufflinks', label: 'Cufflinks', image: staticImages.link },
+        { id: 'anklets', label: 'Anklets', image: staticImages.anklet },
       ];
 
   const aboutUsImages = featureImageList?.filter(img => img.type === 'aboutUs') || [];
