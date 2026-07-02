@@ -150,6 +150,14 @@ function ShoppingHome() {
   const bestSellers = productList ? productList.filter((product) => product.isBestSeller) : [];
   const newArrivals = productList ? productList.filter((product) => product.isNewArrival) : [];
 
+  const getOptimizedMediaUrl = (url) => {
+    if (!url) return url;
+    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+      return url.replace('/upload/', '/upload/q_auto,f_auto/');
+    }
+    return url;
+  };
+
   // Dynamic images from product list to avoid stock photos
   const dynamicGalleryImages = productList && productList.length > 0
     ? bestSellers.map(p => p.image)
@@ -213,7 +221,7 @@ function ShoppingHome() {
                 initial={{ scale: 1.05 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                src={heroImage}
+                src={getOptimizedMediaUrl(heroImage)}
                 className="w-full h-full object-cover opacity-80"
                 autoPlay
                 loop
@@ -225,7 +233,7 @@ function ShoppingHome() {
                 initial={{ scale: 1.05 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
-                src={heroImage}
+                src={getOptimizedMediaUrl(heroImage)}
                 alt="Hero Campaign"
                 className="w-full h-full object-cover opacity-80"
               />
