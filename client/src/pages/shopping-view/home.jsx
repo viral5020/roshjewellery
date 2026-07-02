@@ -96,7 +96,12 @@ function ShoppingHome() {
 
   useEffect(() => {
     if (featureImageList && featureImageList.length > 0) {
-      setHeroImage(featureImageList[0]?.image);
+      const banner = featureImageList.find(img => !img.type || img.type === 'banner');
+      if (banner) {
+        setHeroImage(banner.image);
+      } else {
+        setHeroImage(featureImageList[0]?.image);
+      }
     }
   }, [featureImageList]);
 
@@ -203,7 +208,7 @@ function ShoppingHome() {
       <section className="relative w-full h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-rosh-primary">
           {heroImage && (
-            heroImage.match(/\.(mp4|webm|ogg)$/i) || heroImage.includes('/video/') ? (
+            heroImage.match(/\.(mp4|webm|ogg|mov)$/i) || heroImage.includes('/video/') ? (
               <motion.video
                 initial={{ scale: 1.05 }}
                 animate={{ scale: 1 }}

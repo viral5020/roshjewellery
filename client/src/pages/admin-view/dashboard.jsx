@@ -136,7 +136,7 @@ function AdminDashboard() {
           <div className="flex flex-col gap-4">
             {bannerImages.length > 0 ? bannerImages.map((featureImgItem) => (
               <div className="relative group" key={featureImgItem._id}>
-                {featureImgItem.image.match(/\.(mp4|webm|ogg)$/i) || featureImgItem.image.includes('/video/') ? (
+                {featureImgItem.image.match(/\.(mp4|webm|ogg|mov)$/i) || featureImgItem.image.includes('/video/') ? (
                   <video
                     src={featureImgItem.image}
                     className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"

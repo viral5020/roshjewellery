@@ -176,7 +176,7 @@ function ProductImageUpload({
             </div>
           ) : uploadedImageUrl ? (
             <div className="relative">
-              {uploadedImageUrl.match(/\.(mp4|webm|ogg)$/i) || uploadedImageUrl.includes('/video/') ? (
+              {uploadedImageUrl.match(/\.(mp4|webm|ogg|mov)$/i) || uploadedImageUrl.includes('/video/') ? (
                 <video
                   src={uploadedImageUrl}
                   className="w-32 h-32 object-cover rounded-lg"
