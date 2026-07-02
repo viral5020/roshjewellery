@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getFeatureImages } from "@/store/common-slice";
 import Footer from "@/components/shopping-view/footer";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ArrowRight, Star, Award, Sparkles, ShieldCheck, Infinity } from "lucide-react";
 import { Instagram } from "lucide-react";
 
@@ -40,8 +41,21 @@ function ShoppingHome() {
 
   const [heroImage, setHeroImage] = useState("");
   const categorySliderRef = useRef(null);
+  const aboutUsCarouselRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#about') {
+      setTimeout(() => {
+        const element = document.getElementById('about');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, [location]);
 
   const [dbSubcategories, setDbSubcategories] = useState([]);
 
@@ -164,6 +178,24 @@ function ShoppingHome() {
   const aboutUsImages = featureImageList?.filter(img => img.type === 'aboutUs') || [];
   const storyImgFallback = productList && productList.length > 3 ? productList[3].image : heroImage;
 
+  useEffect(() => {
+    if (aboutUsImages.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      if (aboutUsCarouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = aboutUsCarouselRef.current;
+        
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          aboutUsCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          aboutUsCarouselRef.current.scrollBy({ left: clientWidth, behavior: 'smooth' });
+        }
+      }
+    }, 4000); 
+
+    return () => clearInterval(interval);
+  }, [aboutUsImages]);
+
   return (
     <div className="flex flex-col min-h-screen bg-rosh-background text-rosh-primary overflow-x-hidden font-sans">
 
@@ -171,14 +203,28 @@ function ShoppingHome() {
       <section className="relative w-full h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-rosh-primary">
           {heroImage && (
-            <motion.img
-              initial={{ scale: 1.05 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              src={heroImage}
-              alt="Hero Campaign"
-              className="w-full h-full object-cover opacity-80"
-            />
+            heroImage.match(/\.(mp4|webm|ogg)$/i) || heroImage.includes('/video/') ? (
+              <motion.video
+                initial={{ scale: 1.05 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                src={heroImage}
+                className="w-full h-full object-cover opacity-80"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            ) : (
+              <motion.img
+                initial={{ scale: 1.05 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                src={heroImage}
+                alt="Hero Campaign"
+                className="w-full h-full object-cover opacity-80"
+              />
+            )
           )}
           <div className="absolute inset-0 bg-rosh-primary/40 mix-blend-multiply"></div>
         </div>
@@ -292,14 +338,15 @@ function ShoppingHome() {
       </section>
 
       {/* 3. Brand Story Section */}
-      <section className="py-16 md:py-24 bg-rosh-primary text-rosh-background">
+      <section id="about" className="py-16 md:py-24 bg-rosh-primary text-rosh-background">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16">
           <motion.div
+            ref={aboutUsCarouselRef}
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="md:w-1/2 flex overflow-x-auto snap-x hide-scrollbar gap-4"
+            className="md:w-1/2 flex overflow-x-auto snap-x hide-scrollbar gap-4 scroll-smooth"
           >
             {aboutUsImages.length > 0 ? (
               aboutUsImages.map((img) => (

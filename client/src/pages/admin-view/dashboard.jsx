@@ -34,6 +34,15 @@ function AdminDashboard() {
   const curatedImages = featureImageList ? featureImageList.filter(img => img.type?.startsWith('curated_')) : [];
 
   function handleUploadFeatureImage() {
+    if (imageType === 'banner' && bannerImages.length >= 1) {
+      toast({
+        title: "Maximum limit reached",
+        description: "You can only upload 1 banner video.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (imageType === 'aboutUs' && aboutUsImages.length >= 5) {
       toast({
         title: "Maximum limit reached",
@@ -112,6 +121,9 @@ function AdminDashboard() {
           setImageLoadingState={setImageLoadingState}
           imageLoadingState={imageLoadingState}
           isCustomStyling={true}
+          accept={imageType === 'banner' ? "video/*" : "image/*"}
+          label={imageType === 'banner' ? "Banner Video (Max 1)" : "Image"}
+          showSubImages={false}
         />
         <Button onClick={handleUploadFeatureImage} className="mt-5 w-full" disabled={!uploadedImageUrl}>
           Upload
@@ -124,10 +136,18 @@ function AdminDashboard() {
           <div className="flex flex-col gap-4">
             {bannerImages.length > 0 ? bannerImages.map((featureImgItem) => (
               <div className="relative group" key={featureImgItem._id}>
-                <img
-                  src={featureImgItem.image}
-                  className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
-                />
+                {featureImgItem.image.match(/\.(mp4|webm|ogg)$/i) || featureImgItem.image.includes('/video/') ? (
+                  <video
+                    src={featureImgItem.image}
+                    className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
+                    autoPlay muted loop playsInline
+                  />
+                ) : (
+                  <img
+                    src={featureImgItem.image}
+                    className="w-full h-[150px] object-cover rounded-lg shadow-sm border border-gray-100"
+                  />
+                )}
                 <Button
                   variant="destructive"
                   size="icon"

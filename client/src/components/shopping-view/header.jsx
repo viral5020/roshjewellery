@@ -23,7 +23,7 @@ const luxuryNavLinks = [
   { id: 'Men', label: 'Men', path: '/shop/Men' },
   { id: 'Women', label: 'Women', path: '/shop/Women' },
   { id: 'collections', label: 'Collections', path: '/shop/listing' },
-  { id: 'about', label: 'About Us', path: '/shop/home' }, 
+  { id: 'about', label: 'About Us', path: '/shop/home#about' }, 
   { id: 'custom', label: 'Custom', path: '/shop/custom' }, 
 ];
 
@@ -59,7 +59,22 @@ function ShoppingHeader() {
   };
 
   function handleNavigate(menuItem) {
-    if (menuItem.id === 'about' || menuItem.id === 'custom' || menuItem.id === 'collections') {
+    if (menuItem.id === 'about') {
+      sessionStorage.removeItem("filters");
+      if (window.location.pathname === '/shop/home') {
+        const element = document.getElementById('about');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          navigate(menuItem.path);
+        }
+      } else {
+        navigate(menuItem.path);
+      }
+      return;
+    }
+
+    if (menuItem.id === 'custom' || menuItem.id === 'collections') {
       sessionStorage.removeItem("filters");
       navigate(menuItem.path);
       return;

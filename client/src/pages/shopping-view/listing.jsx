@@ -266,7 +266,7 @@ function ShoppingListing() {
           {/* Middle: Title & Count */}
           <div className="flex-1 flex flex-col items-center justify-center text-center">
             <h1 className="font-serif text-2xl md:text-3xl text-rosh-primary capitalize m-0 leading-none">
-              {categoryName ? categoryName : "Complete Collection"}
+              {categoryName ? `${categoryName} Collection` : "Complete Collection"}
             </h1>
             <span className="text-[9px] md:text-[10px] font-light text-rosh-primary/50 tracking-[0.2em] uppercase mt-2">
               {displayedProductList.length} Products

@@ -19,6 +19,7 @@ function ProductImageUpload({
   subImages = [],
   showSubImages = true,
   label = "Main Image",
+  accept = "image/*",
 }) {
   const [subImageFiles, setSubImageFiles] = useState([]);
   const [uploadedSubImageUrls, setUploadedSubImageUrls] = useState(subImages);
@@ -35,8 +36,10 @@ function ProductImageUpload({
   function handleMainImageFileChange(event) {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("Main image size should be less than 5MB");
+      const isVideo = selectedFile.type.startsWith('video/');
+      const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+      if (selectedFile.size > maxSize) {
+        alert(`File size should be less than ${isVideo ? '50MB' : '5MB'}`);
         return;
       }
       setImageFile(selectedFile);
@@ -173,16 +176,24 @@ function ProductImageUpload({
             </div>
           ) : uploadedImageUrl ? (
             <div className="relative">
-              <img
-                src={uploadedImageUrl}
-                alt="Uploaded"
-                className="w-32 h-32 object-cover rounded-lg"
-              />
+              {uploadedImageUrl.match(/\.(mp4|webm|ogg)$/i) || uploadedImageUrl.includes('/video/') ? (
+                <video
+                  src={uploadedImageUrl}
+                  className="w-32 h-32 object-cover rounded-lg"
+                  autoPlay muted loop playsInline
+                />
+              ) : (
+                <img
+                  src={uploadedImageUrl}
+                  alt="Uploaded"
+                  className="w-32 h-32 object-cover rounded-lg"
+                />
+              )}
               {!isEditMode && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-1 right-1 text-red-600"
+                  className="absolute top-1 right-1 text-red-600 bg-white/50 hover:bg-white"
                   onClick={handleRemoveImage}
                 >
                   <XIcon className="w-4 h-4" />
@@ -201,7 +212,7 @@ function ProductImageUpload({
               <Input
                 id="image-upload"
                 type="file"
-                accept="image/*"
+                accept={accept}
                 onChange={handleMainImageFileChange}
                 className="hidden"
                 disabled={isEditMode}
