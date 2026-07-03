@@ -106,6 +106,17 @@ app.use(
       }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'Cache-Control',
+      'Expires',
+      'Pragma'
+    ]
   })
 );
 
@@ -241,8 +252,8 @@ app.get('/auth/google/callback', (req, res, next) => {
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Origin', req.headers.origin || frontendUrl);
 
-        // Redirect to the frontend
-        res.redirect(`${frontendUrl}/shop/home`);
+        // Redirect to the frontend with the token in the URL query string
+        res.redirect(`${frontendUrl}/shop/home?token=${token}`);
     })(req, res, next);
 });
 

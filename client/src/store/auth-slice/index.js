@@ -22,10 +22,16 @@ axios.defaults.headers.common['Accept'] = 'application/json';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// Add request interceptor for debugging
+// Add request interceptor for debugging and auth token
 axios.interceptors.request.use(request => {
   // Ensure credentials are included
   request.withCredentials = true;
+  
+  // Add token from localStorage to Authorization header
+  const token = localStorage.getItem('token');
+  if (token) {
+    request.headers.Authorization = `Bearer ${token}`;
+  }
   
   console.log('Starting Request:', {
     url: request.url,
@@ -108,8 +114,12 @@ export const loginUser = createAsyncThunk(
       
       // If login is successful, verify the session was set
       if (response.data.success) {
-        // Wait a moment for the cookie to be set
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Save the token to localStorage
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+        
+        // Wait a moment for the state to settle
         
         // Verify the session by making a check-auth request
         try {
@@ -163,6 +173,10 @@ export const logoutUser = createAsyncThunk(
           withCredentials: true,
         }
       );
+      
+      // Remove the token from localStorage
+      localStorage.removeItem('token');
+      
       window.location.href = "/shop/home"; // Redirect to home after successful logout
       return response.data;
     } catch (error) {

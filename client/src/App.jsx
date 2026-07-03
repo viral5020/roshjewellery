@@ -88,6 +88,15 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Intercept Google OAuth token from URL if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      // Clean up the URL without reloading the page
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     dispatch(checkAuth());
   }, [dispatch]);
 

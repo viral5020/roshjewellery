@@ -105,6 +105,7 @@ const loginUser = async (req, res) => {
     res.json({
       success: true,
       message: "Logged in successfully",
+      token,
       user: {
         email: checkUser.email,
         role: checkUser.role,
@@ -145,11 +146,18 @@ const authMiddleware = async (req, res, next) => {
     console.log('Auth middleware - Raw cookies:', req.headers.cookie);
     console.log('Auth middleware - Parsed cookies:', req.cookies);
     
-    const token = req.cookies.token;
+    // Check for token in Authorization header first, then fallback to cookies
+    const authHeader = req.headers.authorization;
+    let token = req.cookies.token;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+
     console.log('Auth middleware - Token present:', !!token);
     
     if (!token) {
-      console.log('No token found in cookies');
+      console.log('No token found in cookies or headers');
       return res.status(401).json({
         success: false,
         message: "Authentication token not found",
