@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, ArrowRight, X, Mail } from "lucide-react";
-import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaYoutube, FaWhatsapp } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Payment images for example
@@ -275,14 +275,11 @@ const Footer = ({ hideNewsletter = false }) => {
                 <li><a href="tel:+917208200828" className="hover:text-rosh-accent transition-colors duration-300">+91 7208200828</a></li>
               </ul>
               <div className="flex space-x-6">
-                <a href="#" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">
+                <a href="https://www.instagram.com/roshfinejewellery?igsh=ZGJzcW1sMHo4eHlo" target="_blank" rel="noopener noreferrer" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">
                   <Instagram className="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
                 </a>
-                <a href="#" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">
-                  <Facebook className="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
-                </a>
-                <a href="#" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">
-                  <Twitter className="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
+                <a href="https://wa.me/917208200828" target="_blank" rel="noopener noreferrer" className="text-rosh-background/50 hover:text-rosh-accent transition-colors duration-300 group">
+                  <FaWhatsapp className="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300" />
                 </a>
               </div>
             </motion.div>

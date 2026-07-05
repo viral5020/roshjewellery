@@ -238,9 +238,9 @@ function ShoppingListing() {
   }) || [];
 
   return (
-    <div className="bg-rosh-background md:h-[calc(100vh-80px)] md:overflow-hidden text-rosh-primary font-sans flex flex-col">
+    <div className="bg-rosh-background min-h-screen text-rosh-primary font-sans flex flex-col">
       {/* Unified Control Bar */}
-      <div className="bg-rosh-background/95 backdrop-blur-md border-b border-rosh-primary/10 w-full shrink-0">
+      <div className="bg-rosh-background/95 backdrop-blur-md border-b border-rosh-primary/10 w-full shrink-0 sticky top-[64px] md:top-[80px] z-40">
         <div className={`max-w-[1600px] mx-auto px-4 md:px-8 flex items-center justify-between ${categoryName ? 'py-2' : 'py-4'}`}>
           
           {/* Left: Filter Toggle */}
@@ -252,7 +252,7 @@ function ShoppingListing() {
                   <span>Filters</span>
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] bg-rosh-background border-r-rosh-primary/10 text-rosh-primary p-6 overflow-y-auto">
+              <SheetContent side="left" className="w-[300px] bg-rosh-background border-r-rosh-primary/10 text-rosh-primary p-6 overflow-y-auto z-50">
                 <SheetHeader className="border-b border-rosh-primary/10 pb-4 mb-6">
                   <SheetTitle className="font-serif tracking-widest uppercase text-xl text-rosh-primary">
                     Filters
@@ -302,18 +302,16 @@ function ShoppingListing() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden w-full max-w-[1600px] mx-auto px-4 md:px-8 mt-4 md:mt-6">
+      <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1600px] mx-auto px-4 md:px-8 mt-4 md:mt-8 pb-16">
         
-        {/* Always-open Sidebar (Desktop only) */}
-        <div 
-          className="hidden md:block w-[280px] md:shrink-0 md:h-full md:overflow-y-auto custom-scrollbar md:pr-4 md:pb-8 md:mr-10"
-        >
+        {/* Always-open Sidebar (Desktop only) - Sticky */}
+        <div className="hidden md:block w-[280px] shrink-0 sticky top-[160px] h-[calc(100vh-180px)] overflow-y-auto custom-scrollbar pr-4 mr-10 self-start">
           {filterComponent}
         </div>
         
-        {/* Product Grid and Footer (Content Section) */}
-        <div className="flex-1 w-full min-w-0 md:h-full md:overflow-y-auto custom-scrollbar flex flex-col justify-between">
-          <div className="w-full transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)] pb-16">
+        {/* Product Grid */}
+        <div className="flex-1 w-full min-w-0 flex flex-col">
+          <div className="w-full transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 lg:gap-x-8 gap-y-12 md:gap-y-16">
               {displayedProductList && displayedProductList.length > 0 ? (
                 displayedProductList.map((productItem) => (
@@ -340,8 +338,12 @@ function ShoppingListing() {
               )}
             </div>
           </div>
-          <Footer />
         </div>
+      </div>
+      
+      {/* Full-width Footer */}
+      <div className="w-full shrink-0">
+        <Footer />
       </div>
     </div>
   );

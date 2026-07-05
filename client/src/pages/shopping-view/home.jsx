@@ -405,7 +405,7 @@ function ShoppingHome() {
           </motion.div>
           <button
             onClick={() => navigate('/shop/best-sellers')}
-            className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
+            className="flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-[10px] md:text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors mt-2 md:mt-0"
           >
             View All
           </button>
@@ -447,7 +447,7 @@ function ShoppingHome() {
             </motion.div>
             <button
               onClick={() => navigate('/shop/new-arrivals')}
-              className="hidden md:flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors"
+              className="flex pb-1 border-b border-rosh-primary text-rosh-primary uppercase tracking-widest text-[10px] md:text-xs hover:text-rosh-accent hover:border-rosh-accent transition-colors mt-2 md:mt-0"
             >
               Shop New In
             </button>
