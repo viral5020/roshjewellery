@@ -20,7 +20,8 @@ const handleImageUpload = async (req, res) => {
     console.log(error);
     res.json({
       success: false,
-      message: "Error occured",
+      message: error?.message || "Error occured",
+      fullError: error
     });
   }
 };
