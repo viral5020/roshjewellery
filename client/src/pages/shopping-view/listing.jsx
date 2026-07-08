@@ -222,7 +222,7 @@ function ShoppingListing() {
           fvAdjusted = filterName;
         }
 
-        return prodSubcat.includes(fvAdjusted) || fvAdjusted.includes(prodSubcat);
+        return prodSubcat === fvAdjusted;
       });
 
       match = match && matches;

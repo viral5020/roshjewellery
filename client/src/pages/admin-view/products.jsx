@@ -63,6 +63,7 @@ function AdminProducts() {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
   const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
   const [openCreateSubCategoryDialog, setOpenCreateSubCategoryDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState(initialFormData);
   const [categoryFormData, setCategoryFormData] = useState(initialCategoryFormData);
@@ -327,6 +328,8 @@ function AdminProducts() {
 
   function onSubmit(event) {
     event.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     // Ensure subImages is an array
     const subImagesArray = Array.isArray(subImages) ? subImages : [];
@@ -350,6 +353,7 @@ function AdminProducts() {
     if (currentEditedId !== null) {
       dispatch(editProduct({ id: currentEditedId, formData: productData }))
         .then((data) => {
+          setIsSubmitting(false);
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
             setFormData(initialFormData);
@@ -364,6 +368,7 @@ function AdminProducts() {
     } else {
       dispatch(addNewProduct(productData))
         .then((data) => {
+          setIsSubmitting(false);
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
             setOpenCreateProductsDialog(false);
@@ -373,8 +378,6 @@ function AdminProducts() {
             setUploadedImageUrl("");
             setUploadedVideoUrl("");
             toast({ title: "Product added successfully" });
-            // Send email notification for new product
-            sendEmailNotification(productData);
           }
         });
     }
@@ -575,47 +578,10 @@ function AdminProducts() {
     link.click();
   }
 
-  function sendEmailNotification(product) {
-    const emailData = {
-      productData: {
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        brand: product.brand
-      }
-    };
-
-    fetch("/api/add-product-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(emailData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to send email");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          toast({ title: "Product notification email sent successfully" });
-        } else {
-          throw new Error(data.message || "Failed to send email");
-        }
-      })
-      .catch((err) => {
-        console.error("Error sending email:", err);
-        toast({ 
-          title: "Failed to send product notification email",
-          variant: "destructive"
-        });
-      });
-  }
-
   function onCategorySubmit(event) {
     event.preventDefault();
-    setOpenCreateCategoryDialog(false);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     const categoryData = {
       ...categoryFormData,
@@ -667,15 +633,23 @@ function AdminProducts() {
           title: data.success ? "Category created successfully" : "Error creating category",
           description: data.message,
         });
+        if (data.success) {
+          setOpenCreateCategoryDialog(false);
+          setCategoryFormData(initialCategoryFormData);
+          setUploadedImageUrl("");
+          setImageFile(null);
+        }
       })
       .catch((err) =>
         toast({ title: "Error creating category", description: err.message })
-      );
+      )
+      .finally(() => setIsSubmitting(false));
   }
 
   // Handle subcategory form submission
   const onSubCategorySubmit = (event) => {
     event.preventDefault();
+    if (isSubmitting) return;
 
     if (!subCategoryFormData.name || !subCategoryFormData.category) {
       toast({
@@ -684,6 +658,8 @@ function AdminProducts() {
       });
       return;
     }
+
+    setIsSubmitting(true);
 
     fetch("/api/subcategories/create", {
       method: "POST",
@@ -713,7 +689,8 @@ function AdminProducts() {
           title: "Error creating subcategory",
           description: err.message,
         });
-      });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
 
@@ -842,7 +819,7 @@ function AdminProducts() {
                 }
                 return el;
               })}
-              isBtnDisabled={!isFormValid()}
+              isBtnDisabled={!isFormValid() || isSubmitting}
               onCategoryChange={handleCategoryChange}
               onAddCategory={() => setOpenCreateCategoryDialog(true)}
             >
@@ -986,7 +963,7 @@ function AdminProducts() {
                     setCategoryFormData({ ...categoryFormData, name: e.target.value }),
                 },
               ]}
-              isBtnDisabled={categoryFormData.name === ""}
+              isBtnDisabled={categoryFormData.name === "" || isSubmitting}
             />
           </div>
         </SheetContent>
@@ -1031,7 +1008,7 @@ function AdminProducts() {
         setFormData={setSubCategoryFormData}
         buttonText="Add SubCategory"
         formControls={SubcategoryElement}
-        isBtnDisabled={false}
+        isBtnDisabled={isSubmitting}
       />
     </div>
   </SheetContent>
