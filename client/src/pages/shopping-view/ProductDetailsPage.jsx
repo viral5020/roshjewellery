@@ -103,8 +103,8 @@ function ProductDetailsPage() {
   };
 
 
-  const currentCategory = categories.find(c => c.name === productDetails?.category);
-  const currentSubcategory = subcategories.find(sc => sc.name === productDetails?.subcategory);
+  const currentCategory = categories.find(c => c.name?.toLowerCase() === productDetails?.category?.toLowerCase());
+  const currentSubcategory = subcategories.find(sc => sc.name?.toLowerCase() === productDetails?.subcategory?.toLowerCase());
   
   const getCategoryName = () => {
     const cat = String(productDetails?.category || "").toLowerCase();

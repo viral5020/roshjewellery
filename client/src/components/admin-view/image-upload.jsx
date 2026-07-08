@@ -201,13 +201,13 @@ function ProductImageUpload({
             </div>
           ) : (
             <Label
-              htmlFor="image-upload"
+              htmlFor={`image-upload-${label.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
               className={`flex flex-col items-center justify-center cursor-pointer`}
             >
               <UploadCloudIcon className="w-8 h-8 text-muted-foreground mb-2" />
               <span>Click to upload or drag and drop</span>
               <Input
-                id="image-upload"
+                id={`image-upload-${label.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                 type="file"
                 accept={accept}
                 onChange={handleMainImageFileChange}
@@ -262,7 +262,7 @@ function ProductImageUpload({
             ))}
             {uploadedSubImageUrls.length + subImageFiles.length < 4 && (
               <Label
-                htmlFor="sub-images-upload"
+                htmlFor={`sub-images-upload-${label.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                 className={`flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg ${
                   subImageUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 }`}
@@ -276,7 +276,7 @@ function ProductImageUpload({
                   </>
                 )}
                 <Input
-                  id="sub-images-upload"
+                  id={`sub-images-upload-${label.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
                   type="file"
                   accept="image/*"
                   multiple
