@@ -36,6 +36,7 @@ const addToCart = async (req, res) => {
 
     // If product not found in cart, push it, otherwise update the quantity
     if (findCurrentProductIndex === -1) {
+      cart.items.push({
         productId,
         quantity,
         weight: product.weight,  // Add weight from product
