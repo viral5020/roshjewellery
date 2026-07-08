@@ -19,6 +19,7 @@ import StarRatingComponent from "@/components/common/star-rating";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getReviews, addReview } from "@/store/shop/review-slice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -66,6 +67,8 @@ function ProductDetailsPage() {
   const [openAccordion, setOpenAccordion] = useState("specifications");
   const { toast } = useToast();
   
+  const [selectedSize, setSelectedSize] = useState("");
+  
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
@@ -103,6 +106,34 @@ function ProductDetailsPage() {
   const currentCategory = categories.find(c => c.name === productDetails?.category);
   const currentSubcategory = subcategories.find(sc => sc.name === productDetails?.subcategory);
   
+  const getCategoryName = () => {
+    const cat = String(productDetails?.category || "").toLowerCase();
+    const subcat = String(productDetails?.subcategory || "").toLowerCase();
+    
+    if (cat.includes("ring") || subcat.includes("ring")) {
+      if (!cat.includes("earring") && !cat.includes("earing") && !subcat.includes("earring") && !subcat.includes("earing")) {
+        return "rings";
+      }
+    }
+    if (cat.includes("chain") || subcat.includes("chain")) return "chains";
+    if (cat.includes("bracelet") || subcat.includes("bracelet")) return "bracelets";
+    return null;
+  };
+
+  const getSizeOptions = () => {
+    const category = getCategoryName();
+    if (category === "rings") {
+      return Array.from({length: 26}, (_, i) => `${i + 5}mm`);
+    } else if (category === "chains") {
+      return ["14", "16", "18", "20", "22"].map(s => `${s} inches`);
+    } else if (category === "bracelets") {
+      return ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5"].map(s => `${s} inches`);
+    }
+    return null;
+  };
+
+  const sizeOptions = getSizeOptions();
+
   // Priority: Subcategory size chart -> Category size chart
   const sizeChartImage = currentSubcategory?.sizeChartImage || currentCategory?.sizeChartImage;
 
@@ -177,11 +208,19 @@ function ProductDetailsPage() {
   }
 
   function handleAddToCart(getCurrentProductId, getTotalStock) {
+    if (sizeOptions && !selectedSize) {
+      toast({
+        title: "Please select a size",
+        variant: "destructive",
+      });
+      return;
+    }
+
     let getCartItems = cartItems.items || [];
 
     if (getCartItems.length) {
       const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
+        (item) => item.productId === getCurrentProductId && item.size === selectedSize
       );
       if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
@@ -199,6 +238,7 @@ function ProductDetailsPage() {
         userId: user?.id || null,
         productId: getCurrentProductId,
         quantity: quantity,
+        size: selectedSize || undefined,
       })
     ).then((data) => {
       if (data?.payload?.success) {
@@ -487,6 +527,25 @@ function ProductDetailsPage() {
               )}
 
               {/* Actions: Quantity & Buttons */}
+              
+              {sizeOptions && (
+                <div className="mb-6">
+                  <p className="text-xs tracking-widest uppercase text-rosh-primary/60 mb-3">
+                    Size: <span className="font-medium text-rosh-primary">{selectedSize || "Select"}</span>
+                  </p>
+                  <Select value={selectedSize} onValueChange={setSelectedSize}>
+                    <SelectTrigger className="w-full h-12 rounded-none border-rosh-primary/20 focus:ring-0 focus:border-rosh-primary transition-colors">
+                      <SelectValue placeholder="Select a size" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-none border-rosh-primary/20">
+                      {sizeOptions.map(size => (
+                        <SelectItem key={size} value={size} className="cursor-pointer focus:bg-rosh-primary/5 rounded-none">{size}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
               <div className="flex flex-col gap-4 mt-2 mb-8">
                 <div className="flex flex-col sm:flex-row gap-4">
                   {/* Quantity Selector */}

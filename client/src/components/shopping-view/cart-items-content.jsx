@@ -23,7 +23,7 @@ function UserCartItemsContent({ cartItem }) {
 
       if (getCartItems.length) {
         const indexOfCurrentCartItem = getCartItems.findIndex(
-          (item) => item.productId === getCartItem?.productId
+          (item) => item.productId === getCartItem?.productId && item.size === getCartItem?.size
         );
 
         const getCurrentProductIndex = productList.findIndex(
@@ -53,6 +53,7 @@ function UserCartItemsContent({ cartItem }) {
           typeOfAction === "plus"
             ? getCartItem?.quantity + 1
             : getCartItem?.quantity - 1,
+        size: getCartItem?.size,
       })
     ).then((data) => {
       if (data?.payload?.success) {
@@ -65,7 +66,7 @@ function UserCartItemsContent({ cartItem }) {
 
   function handleCartItemDelete(getCartItem) {
     dispatch(
-      deleteCartItem({ userId: user?.id, productId: getCartItem?.productId })
+      deleteCartItem({ userId: user?.id, productId: getCartItem?.productId, size: getCartItem?.size })
     ).then((data) => {
       if (data?.payload?.success) {
         toast({
@@ -84,6 +85,7 @@ function UserCartItemsContent({ cartItem }) {
       />
       <div className="flex-1 flex flex-col h-24 justify-between py-1">
         <h3 className="font-serif text-lg tracking-wide text-rosh-primary line-clamp-2">{cartItem?.title}</h3>
+        {cartItem?.size && <p className="text-xs text-rosh-primary/70">Size: {cartItem.size}</p>}
         
         <div className="flex items-center gap-3 mt-2 border border-rosh-primary/20 w-fit px-2 py-1">
           <button

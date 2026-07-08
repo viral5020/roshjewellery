@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import { Separator } from "../../components/ui/separator";
 import { Input } from "../../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { useToast } from "../../components/ui/use-toast";
@@ -21,7 +22,37 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const { cartItems } = useSelector((state) => state.shopCart);
   const { reviews } = useSelector((state) => state.shopReview);
 
+  const [selectedSize, setSelectedSize] = useState("");
+
   const { toast } = useToast();
+
+  const getCategoryName = () => {
+    const cat = String(productDetails?.category || "").toLowerCase();
+    const subcat = String(productDetails?.subcategory || "").toLowerCase();
+    
+    if (cat.includes("ring") || subcat.includes("ring")) {
+      if (!cat.includes("earring") && !cat.includes("earing") && !subcat.includes("earring") && !subcat.includes("earing")) {
+        return "rings";
+      }
+    }
+    if (cat.includes("chain") || subcat.includes("chain")) return "chains";
+    if (cat.includes("bracelet") || subcat.includes("bracelet")) return "bracelets";
+    return null;
+  };
+
+  const getSizeOptions = () => {
+    const category = getCategoryName();
+    if (category === "rings") {
+      return Array.from({length: 26}, (_, i) => `${i + 5}mm`);
+    } else if (category === "chains") {
+      return ["14", "16", "18", "20", "22"].map(s => `${s} inches`);
+    } else if (category === "bracelets") {
+      return ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5"].map(s => `${s} inches`);
+    }
+    return null;
+  };
+
+  const sizeOptions = getSizeOptions();
 
   // Handle rating change
   function handleRatingChange(getRating) {
@@ -30,11 +61,19 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   // Handle adding product to cart
   function handleAddToCart(getCurrentProductId, getTotalStock) {
+    if (sizeOptions && !selectedSize) {
+      toast({
+        title: "Please select a size",
+        variant: "destructive",
+      });
+      return;
+    }
+
     let getCartItems = cartItems.items || [];
 
     if (getCartItems.length) {
       const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
+        (item) => item.productId === getCurrentProductId && item.size === selectedSize
       );
       if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
@@ -53,6 +92,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         userId: user?.id,
         productId: getCurrentProductId,
         quantity: 1,
+        size: selectedSize || undefined,
       })
     ).then((data) => {
       if (data?.payload?.success) {
@@ -64,12 +104,12 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     });
   }
 
-  // Handle closing the dialog and resetting state
   function handleDialogClose() {
     setOpen(false);
     dispatch(setProductDetails());
     setRating(0);
     setReviewMsg("");
+    setSelectedSize("");
   }
 
   // Handle adding review
@@ -234,6 +274,23 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               ({averageReview.toFixed(2)})
             </span>
           </div>
+
+          {sizeOptions && (
+            <div className="mt-4">
+              <Label className="mb-2 block">Select Size</Label>
+              <Select value={selectedSize} onValueChange={setSelectedSize}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a size" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sizeOptions.map(size => (
+                    <SelectItem key={size} value={size}>{size}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="mt-5 mb-5">
             {productDetails?.totalStock === 0 ? (
               <Button className="w-full opacity-60 cursor-not-allowed">

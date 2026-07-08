@@ -10,7 +10,7 @@ const initialState = {
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ userId, productId, quantity }, { rejectWithValue, getState }) => {
+  async ({ userId, productId, quantity, size }, { rejectWithValue, getState }) => {
     try {
       // If no userId, store in tempCartItems
       if (!userId) {
@@ -20,7 +20,7 @@ export const addToCart = createAsyncThunk(
         
         const state = getState();
         const tempItems = [...state.shopCart.tempCartItems];
-        const existingItem = tempItems.find(item => item.productId === productId);
+        const existingItem = tempItems.find(item => item.productId === productId && item.size === size);
         
         if (existingItem) {
           existingItem.quantity += quantity;
@@ -33,7 +33,8 @@ export const addToCart = createAsyncThunk(
             salePrice: productDetails.salePrice,
             image: productDetails.image,
             weight: productDetails.weight,
-            totalStock: productDetails.totalStock
+            totalStock: productDetails.totalStock,
+            size
           });
         }
         
@@ -47,6 +48,7 @@ export const addToCart = createAsyncThunk(
           userId,
           productId,
           quantity,
+          size,
         }
       );
 
@@ -81,20 +83,20 @@ export const fetchCartItems = createAsyncThunk(
 
 export const deleteCartItem = createAsyncThunk(
   "cart/deleteCartItem",
-  async ({ userId, productId }, { rejectWithValue, getState }) => {
+  async ({ userId, productId, size }, { rejectWithValue, getState }) => {
     try {
       // If no userId, remove from tempCartItems
       if (!userId) {
         const state = getState();
         const tempItems = state.shopCart.tempCartItems.filter(
-          item => item.productId !== productId
+          item => !(item.productId === productId && item.size === size)
         );
         return { success: true, data: { items: tempItems } };
       }
 
       // If userId exists, delete from server
       const response = await axios.delete(
-        `/api/shop/cart/${userId}/${productId}`
+        `/api/shop/cart/${userId}/${productId}${size ? `/${encodeURIComponent(size)}` : ''}`
       );
 
       return response.data;
@@ -106,13 +108,13 @@ export const deleteCartItem = createAsyncThunk(
 
 export const updateCartQuantity = createAsyncThunk(
   "cart/updateCartQuantity",
-  async ({ userId, productId, quantity }, { rejectWithValue, getState }) => {
+  async ({ userId, productId, quantity, size }, { rejectWithValue, getState }) => {
     try {
       // If no userId, update in tempCartItems
       if (!userId) {
         const state = getState();
         const tempItems = state.shopCart.tempCartItems.map(item => {
-          if (item.productId === productId) {
+          if (item.productId === productId && item.size === size) {
             return { ...item, quantity };
           }
           return item;
@@ -127,6 +129,7 @@ export const updateCartQuantity = createAsyncThunk(
           userId,
           productId,
           quantity,
+          size,
         }
       );
 
@@ -157,7 +160,8 @@ export const mergeTempCartWithServer = createAsyncThunk(
         axios.post("/api/shop/cart/add", {
           userId,
           productId: item.productId,
-          quantity: item.quantity
+          quantity: item.quantity,
+          size: item.size
         })
       );
 

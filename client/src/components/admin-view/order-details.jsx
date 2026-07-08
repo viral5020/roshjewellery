@@ -38,7 +38,7 @@ function AdminOrderDetailsView({ orderDetails }) {
         ORDER STATUS - ${orderDetails?.orderStatus}
 
         ITEMS:
-        ${orderDetails?.cartItems?.map(item => `- TITLE: ${item.title}, QUANTITY: ${item.quantity}, PRICE: ${item.price}`).join("\n")}
+        ${orderDetails?.cartItems?.map(item => `- TITLE: ${item.title}${item.size ? ` (Size: ${item.size})` : ''}, QUANTITY: ${item.quantity}, PRICE: ${item.price}`).join("\n")}
 
         SHIPPING INFO:
         NAME - ${user.userName}
@@ -123,7 +123,7 @@ function AdminOrderDetailsView({ orderDetails }) {
     yOffset += 10;
     doc.setFontSize(12);
     orderDetails?.cartItems?.forEach((item, index) => {
-      doc.text(`Title: ${item.title}`, 14, yOffset);
+      doc.text(`Title: ${item.title}${item.size ? ` (Size: ${item.size})` : ''}`, 14, yOffset);
       doc.text(`Quantity: ${item.quantity}`, 100, yOffset);
       doc.text(`Price: ${item.price}`, 160, yOffset);
       yOffset += 10;
@@ -269,6 +269,7 @@ function AdminOrderDetailsView({ orderDetails }) {
                         <li key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
                           <div className="flex-1">
                             <span className="font-medium">Title: {item.title}</span>
+                            {item.size && <div className="text-sm text-gray-500 mt-1">Size: {item.size}</div>}
                             {item.image && (
                               <img src={item.image} alt={item.title} className="w-16 h-16 object-cover mt-2 rounded-md" />
                             )}

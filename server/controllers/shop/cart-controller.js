@@ -3,7 +3,7 @@ const Product = require("../../models/product");
 
 const addToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { userId, productId, quantity, size } = req.body;
 
     if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
@@ -31,15 +31,15 @@ const addToCart = async (req, res) => {
 
     // Check if the product already exists in the cart
     const findCurrentProductIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId && (item.size || "") === (size || "")
     );
 
     // If product not found in cart, push it, otherwise update the quantity
     if (findCurrentProductIndex === -1) {
-      cart.items.push({
         productId,
         quantity,
         weight: product.weight,  // Add weight from product
+        size: size || undefined,
       });
     } else {
       cart.items[findCurrentProductIndex].quantity += quantity;
@@ -103,6 +103,7 @@ const fetchCartItems = async (req, res) => {
       salePrice: item.productId.salePrice,
       weight: item.productId.weight,
       quantity: item.quantity,
+      size: item.size,
     }));
 
     console.log('Successfully fetched cart for userId:', userId); // Add logging
@@ -125,7 +126,7 @@ const fetchCartItems = async (req, res) => {
 
 const updateCartItemQty = async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { userId, productId, quantity, size } = req.body;
 
     if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
@@ -143,7 +144,7 @@ const updateCartItemQty = async (req, res) => {
     }
 
     const findCurrentProductIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId && (item.size || "") === (size || "")
     );
 
     if (findCurrentProductIndex === -1) {
@@ -178,6 +179,7 @@ const updateCartItemQty = async (req, res) => {
       salePrice: item.productId ? item.productId.salePrice : null,
       weight: item.productId ? item.productId.weight : null,  // Include weight
       quantity: item.quantity,
+      size: item.size,
     }));
 
     res.status(200).json({
@@ -198,7 +200,7 @@ const updateCartItemQty = async (req, res) => {
 
 const deleteCartItem = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const { userId, productId, size } = req.params;
     if (!userId || !productId) {
       return res.status(400).json({
         success: false,
@@ -218,9 +220,8 @@ const deleteCartItem = async (req, res) => {
       });
     }
 
-    // Filter out the item to delete from the cart
     cart.items = cart.items.filter(
-      (item) => item.productId._id.toString() !== productId
+      (item) => !(item.productId._id.toString() === productId && (item.size || "") === (size || ""))
     );
 
     await cart.save();
@@ -238,6 +239,7 @@ const deleteCartItem = async (req, res) => {
       salePrice: item.productId ? item.productId.salePrice : null,
       weight: item.productId ? item.productId.weight : null,  // Include weight
       quantity: item.quantity,
+      size: item.size,
     }));
 
     res.status(200).json({

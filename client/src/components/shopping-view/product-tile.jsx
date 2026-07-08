@@ -45,6 +45,21 @@ function ShoppingProductTile({
     return (price * exchangeRates[currency]).toFixed(2);
   };
 
+  const getCategoryNameStr = () => {
+    const cat = String(product?.category || "").toLowerCase();
+    const subcat = String(product?.subcategory || "").toLowerCase();
+    
+    if (cat.includes("ring") || subcat.includes("ring")) {
+      if (!cat.includes("earring") && !cat.includes("earing") && !subcat.includes("earring") && !subcat.includes("earing")) {
+        return "rings";
+      }
+    }
+    if (cat.includes("chain") || subcat.includes("chain")) return "chains";
+    if (cat.includes("bracelet") || subcat.includes("bracelet")) return "bracelets";
+    return null;
+  };
+  const requiresSize = !!getCategoryNameStr();
+
   return (
     <div className="w-full max-w-sm mx-auto group">
       <div 
@@ -61,10 +76,6 @@ function ShoppingProductTile({
         {product?.totalStock === 0 ? (
           <Badge className="absolute top-4 left-4 bg-rosh-primary text-rosh-background rounded-none text-xs font-light tracking-wider uppercase px-3 py-1">
             Out Of Stock
-          </Badge>
-        ) : product?.totalStock < 10 ? (
-          <Badge className="absolute top-4 left-4 bg-rosh-accent text-rosh-background rounded-none text-xs font-light tracking-wider uppercase px-3 py-1">
-            Low Stock
           </Badge>
         ) : product?.salePrice > 0 ? (
           <Badge className="absolute top-4 left-4 bg-rosh-secondary text-rosh-primary rounded-none text-xs font-light tracking-wider uppercase px-3 py-1">
@@ -85,11 +96,15 @@ function ShoppingProductTile({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleAddtoCart(product?._id, product?.totalStock);
+                if (requiresSize) {
+                  handleGetProductDetails(product?.title.replace(/\s+/g, '-'));
+                } else {
+                  handleAddtoCart(product?._id, product?.totalStock);
+                }
               }}
               className="w-full bg-rosh-background/95 hover:bg-rosh-primary hover:text-rosh-background transition-colors text-rosh-primary py-3 uppercase text-xs tracking-widest font-medium"
             >
-              Add to cart
+              {requiresSize ? "Select Size" : "Add to cart"}
             </button>
           )}
         </div>

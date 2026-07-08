@@ -37,6 +37,7 @@ function OrderItemCard({ item }) {
       )}
       <div className="flex-1 flex flex-col justify-center">
         <h4 className="font-medium text-sm text-rosh-primary line-clamp-1">{item.title}</h4>
+        {item.size && <p className="text-xs text-rosh-primary/70 mt-1">Size: {item.size}</p>}
         <div className="flex items-center gap-4 mt-2">
           <span className="text-[10px] uppercase tracking-[0.2em] text-rosh-primary/60">Qty: {item.quantity}</span>
           <span className="text-xs font-medium text-rosh-primary">₹{item.price}</span>
@@ -60,7 +61,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
         ORDER STATUS - ${orderDetails?.orderStatus}
 
         ITEMS:
-        ${orderDetails?.cartItems?.map(item => `- TITLE: ${item.title}, QUANTITY: ${item.quantity}, PRICE: ${item.price}`).join("\n")}
+        ${orderDetails?.cartItems?.map(item => `- TITLE: ${item.title}${item.size ? ` (Size: ${item.size})` : ''}, QUANTITY: ${item.quantity}, PRICE: ${item.price}`).join("\n")}
 
         SHIPPING INFO:
         NAME - ${user.userName}
@@ -105,7 +106,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
     yOffset += 10;
     doc.setFontSize(12);
     orderDetails?.cartItems?.forEach((item) => {
-      doc.text(`Title: ${item.title}`, 14, yOffset);
+      doc.text(`Title: ${item.title}${item.size ? ` (Size: ${item.size})` : ''}`, 14, yOffset);
       doc.text(`Quantity: ${item.quantity}`, 100, yOffset);
       doc.text(`Price: ${item.price}`, 160, yOffset);
       yOffset += 10;

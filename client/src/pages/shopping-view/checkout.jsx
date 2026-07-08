@@ -185,6 +185,7 @@ function ShoppingCheckout() {
             ? singleCartItem?.salePrice
             : singleCartItem?.price,
         quantity: singleCartItem?.quantity,
+        size: singleCartItem?.size,
       })),
       shippingAddress: {
         addressId: shippingAddress?._id,
@@ -340,6 +341,7 @@ function ShoppingCheckout() {
                     ? singleCartItem?.salePrice
                     : singleCartItem?.price,
                 quantity: singleCartItem?.quantity,
+                size: singleCartItem?.size,
               })),
               shippingAddress: user ? {
                 addressId: shippingAddress?._id,
@@ -532,6 +534,7 @@ function ShoppingCheckout() {
             ? singleCartItem?.salePrice
             : singleCartItem?.price,
         quantity: singleCartItem?.quantity,
+        size: singleCartItem?.size,
       })),
       shippingAddress: user ? {
         addressId: shippingAddress?._id,
