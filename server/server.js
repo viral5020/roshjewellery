@@ -1,4 +1,4 @@
-// Triggering nodemon restart with comment update
+// Triggering nodemon restart to load new .env variables
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
