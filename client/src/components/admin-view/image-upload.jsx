@@ -75,6 +75,9 @@ function ProductImageUpload({
 
   function handleRemoveImage() {
     setImageFile(null);
+    if (setUploadedImageUrl) {
+      setUploadedImageUrl("");
+    }
     if (inputRef.current) {
       inputRef.current.value = "";
     }
@@ -164,9 +167,7 @@ function ProductImageUpload({
       <div className="space-y-2">
         <Label>{label}</Label>
         <div
-          className={`border-2 border-dashed rounded-lg p-4 ${
-            isEditMode ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-          }`}
+          className={`border-2 border-dashed rounded-lg p-4 cursor-pointer`}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
@@ -189,23 +190,19 @@ function ProductImageUpload({
                   className="w-32 h-32 object-cover rounded-lg"
                 />
               )}
-              {!isEditMode && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1 right-1 text-red-600 bg-white/50 hover:bg-white"
-                  onClick={handleRemoveImage}
-                >
-                  <XIcon className="w-4 h-4" />
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-1 right-1 text-red-600 bg-white/50 hover:bg-white"
+                onClick={handleRemoveImage}
+              >
+                <XIcon className="w-4 h-4" />
+              </Button>
             </div>
           ) : (
             <Label
               htmlFor="image-upload"
-              className={`flex flex-col items-center justify-center ${
-                isEditMode ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`flex flex-col items-center justify-center cursor-pointer`}
             >
               <UploadCloudIcon className="w-8 h-8 text-muted-foreground mb-2" />
               <span>Click to upload or drag and drop</span>
@@ -215,7 +212,7 @@ function ProductImageUpload({
                 accept={accept}
                 onChange={handleMainImageFileChange}
                 className="hidden"
-                disabled={isEditMode}
+                ref={inputRef}
               />
             </Label>
           )}
@@ -267,7 +264,7 @@ function ProductImageUpload({
               <Label
                 htmlFor="sub-images-upload"
                 className={`flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg ${
-                  isEditMode || subImageUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  subImageUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                 }`}
               >
                 {subImageUploading ? (
@@ -285,7 +282,7 @@ function ProductImageUpload({
                   multiple
                   onChange={handleSubImageFileChange}
                   className="hidden"
-                  disabled={isEditMode || subImageUploading}
+                  disabled={subImageUploading}
                 />
               </Label>
             )}
