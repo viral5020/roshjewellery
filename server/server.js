@@ -5,9 +5,9 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
-const crypto = require ('crypto');
+const crypto = require('crypto');
 
-const jwt = require ('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const passport = require('passport');
 const session = require('express-session');
@@ -39,13 +39,13 @@ const userRoutes = require("./routes/auth/auth-routes");
 
 const sendCheckoutNotification = require('./emailService');
 
-const paymentRouter  = require("./routes/shop/payment");
+const paymentRouter = require("./routes/shop/payment");
 
 const invoiceRoutes = require('./routes/admin/invoiceRoutes');
 
 const newsletterRoutes = require('./routes/shop/newsletterRoutes');
 
-const wishlistRoutes=require("./routes/shop/wishlistRoutes");
+const wishlistRoutes = require("./routes/shop/wishlistRoutes");
 
 const subCategoryRoutes = require("./routes/admin/subCategoryRoutes");
 
@@ -63,8 +63,8 @@ const clientid = process.env.GOOGLE_CLIENT_ID;
 const clientsecret = process.env.GOOGLE_CLIENT_SECRET;
 
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('mongoDB connected'))
-    .catch((error) => console.log(error));
+  .then(() => console.log('mongoDB connected'))
+  .catch((error) => console.log(error));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -79,6 +79,7 @@ if (isProd) {
 // Configure CORS
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://roshfinejewellery.com",
   "https://roshjewellery-1.onrender.com",
   "https://roshjewellery.onrender.com"
 ];
@@ -91,13 +92,13 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, postman)
       if (!origin) return callback(null, true);
-      
-      const isAllowed = 
-        origin.startsWith("http://localhost:") || 
-        origin.startsWith("http://127.0.0.1:") || 
+
+      const isAllowed =
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:") ||
         origin.includes("roshjewellery") ||
         allowedOrigins.includes(origin);
-        
+
       if (isAllowed) {
         callback(null, true);
       } else {
@@ -129,32 +130,32 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Add request logging middleware with better error handling
 app.use((req, res, next) => {
-    try {
-        console.log('Incoming request:', {
-            method: req.method,
-            url: req.url,
-            headers: req.headers,
-            cookies: req.cookies,
-            body: req.body
-        });
-        next();
-    } catch (error) {
-        console.error('Error in request logging middleware:', error);
-        next(error);
-    }
+  try {
+    console.log('Incoming request:', {
+      method: req.method,
+      url: req.url,
+      headers: req.headers,
+      cookies: req.cookies,
+      body: req.body
+    });
+    next();
+  } catch (error) {
+    console.error('Error in request logging middleware:', error);
+    next(error);
+  }
 });
 
 // setup session with more permissive settings
 app.use(session({
-    secret: process.env.SESSION_SECRET || "your-secret-key-here",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        secure: isProd,
-        sameSite: isProd ? 'none' : 'lax',
-        path: '/',
-        maxAge: 24 * 60 * 60 * 1000
-    }
+  secret: process.env.SESSION_SECRET || "your-secret-key-here",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 // setup passport
@@ -162,108 +163,108 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(
-    new OAuth2Strategy({
-        clientID: clientid,
-        clientSecret: clientsecret,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL || (process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/auth/google/callback` : "http://localhost:5000/auth/google/callback"),
-        scope: ["profile", "email"]
-    },
+  new OAuth2Strategy({
+    clientID: clientid,
+    clientSecret: clientsecret,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || (process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/auth/google/callback` : "http://localhost:5000/auth/google/callback"),
+    scope: ["profile", "email"]
+  },
     async (accessToken, refreshToken, profile, done) => {
-        try {
-            console.log('Google OAuth profile:', profile);
-            let user = await User.findOne({ email: profile.emails[0].value });
+      try {
+        console.log('Google OAuth profile:', profile);
+        let user = await User.findOne({ email: profile.emails[0].value });
 
-            if (!user) {
-                console.log('Creating new user from Google profile');
-                user = new User({
-                    email: profile.emails[0].value,
-                    userName: profile.displayName,
-                    googleId: profile.id,
-                    image: profile.photos[0].value,
-                    role: 'user'
-                });
+        if (!user) {
+          console.log('Creating new user from Google profile');
+          user = new User({
+            email: profile.emails[0].value,
+            userName: profile.displayName,
+            googleId: profile.id,
+            image: profile.photos[0].value,
+            role: 'user'
+          });
 
-                await user.save();
-                console.log('New user created:', user);
-            }
-
-            return done(null, user);
-        } catch (error) {
-            console.error('Google OAuth error:', error);
-            return done(error, null);
+          await user.save();
+          console.log('New user created:', user);
         }
+
+        return done(null, user);
+      } catch (error) {
+        console.error('Google OAuth error:', error);
+        return done(error, null);
+      }
     })
 );
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 
 // Initial Google OAuth route
 app.get('/auth/google',
-    passport.authenticate('google', { 
-        scope: ['profile', 'email'],
-        prompt: 'select_account',
-        session: false
-    })
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account',
+    session: false
+  })
 );
 
 // Google OAuth callback
 app.get('/auth/google/callback', (req, res, next) => {
-    console.log('Google callback received');
-    passport.authenticate('google', { session: false }, (err, user, info) => {
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-        if (err) {
-            console.error('Google callback error:', err);
-            return res.redirect(`${frontendUrl}/auth/login?error=oauth_failed`);
-        }
-        if (!user) {
-            console.log('No user returned from Google auth');
-            return res.redirect(`${frontendUrl}/auth/login?error=user_not_found`);
-        }
-        
-        console.log('Google auth successful, generating token for user:', user.email);
-        
-        const token = jwt.sign(
-            {
-                id: user._id,
-                role: user.role || 'user',
-                email: user.email,
-                userName: user.userName || user.displayName,
-            },
-            "CLIENT_SECRET_KEY",
-            { expiresIn: "7d" }
-        );
+  console.log('Google callback received');
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    if (err) {
+      console.error('Google callback error:', err);
+      return res.redirect(`${frontendUrl}/auth/login?error=oauth_failed`);
+    }
+    if (!user) {
+      console.log('No user returned from Google auth');
+      return res.redirect(`${frontendUrl}/auth/login?error=user_not_found`);
+    }
 
-        // Set cookie directly in headers
-        const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
-        const sameSite = isProd ? 'None' : 'Lax';
-        const secure = isProd ? '; Secure' : '';
-        const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}${secure}`;
-        res.setHeader('Set-Cookie', cookieValue);
-        
-        console.log('Setting cookie for Google auth:', cookieValue);
+    console.log('Google auth successful, generating token for user:', user.email);
 
-        // Set additional CORS headers
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin || frontendUrl);
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role || 'user',
+        email: user.email,
+        userName: user.userName || user.displayName,
+      },
+      "CLIENT_SECRET_KEY",
+      { expiresIn: "7d" }
+    );
 
-        // Redirect to the frontend with the token in the URL query string
-        res.redirect(`${frontendUrl}/shop/home?token=${token}`);
-    })(req, res, next);
+    // Set cookie directly in headers
+    const isProd = process.env.NODE_ENV === 'production' || (process.env.BACKEND_URL && process.env.BACKEND_URL.startsWith('https'));
+    const sameSite = isProd ? 'None' : 'Lax';
+    const secure = isProd ? '; Secure' : '';
+    const cookieValue = `token=${token}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}${secure}`;
+    res.setHeader('Set-Cookie', cookieValue);
+
+    console.log('Setting cookie for Google auth:', cookieValue);
+
+    // Set additional CORS headers
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || frontendUrl);
+
+    // Redirect to the frontend with the token in the URL query string
+    res.redirect(`${frontendUrl}/shop/home?token=${token}`);
+  })(req, res, next);
 });
 
 
 // Logout
 app.get("/logout", (req, res, next) => {
-    req.logout(function (err) {
-        if (err) { return next(err); }
-        res.redirect("");
-    });
+  req.logout(function (err) {
+    if (err) { return next(err); }
+    res.redirect("");
+  });
 });
 
 // Add error handling middleware before routes
@@ -275,7 +276,7 @@ app.use((err, req, res, next) => {
     method: req.method,
     body: req.body
   });
-  
+
   res.status(500).json({
     success: false,
     message: "Internal server error",
@@ -327,7 +328,7 @@ app.use((err, req, res, next) => {
     method: req.method,
     body: req.body
   });
-  
+
   res.status(500).json({
     success: false,
     message: "Internal server error",
@@ -337,12 +338,12 @@ app.use((err, req, res, next) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Server URL: http://localhost:${PORT}`); // Localhost port
-    console.log('Available routes:');
-    console.log('- POST /api/newsletter/subscribe');
-    console.log('- POST /api/newsletter/unsubscribe');
-    console.log('- GET /api/newsletter/subscribers');
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server URL: http://localhost:${PORT}`); // Localhost port
+  console.log('Available routes:');
+  console.log('- POST /api/newsletter/subscribe');
+  console.log('- POST /api/newsletter/unsubscribe');
+  console.log('- GET /api/newsletter/subscribers');
 });
 
-module.exports = {app}
+module.exports = { app }
