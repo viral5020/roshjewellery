@@ -14,7 +14,7 @@
         window.fetch = function (url, options) {
           if (typeof url === 'string' && url.startsWith('/api')) {
             const hostname = window.location.hostname;
-            let baseUrl = 'https://roshjewellery.onrender.com';
+            let baseUrl = 'https://server.roshfinejewellery.com';
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
               baseUrl = 'http://localhost:5000';
             }

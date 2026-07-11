@@ -16,7 +16,7 @@ const loginwithgoogle = () => {
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'http://localhost:5000';
     }
-    return import.meta.env.VITE_API_URL || 'https://roshjewellery.onrender.com';
+    return import.meta.env.VITE_API_URL || 'https://server.roshfinejewellery.com';
   };
   const baseUrl = getBackendUrl();
   window.open(`${baseUrl}/auth/google`, "_self");

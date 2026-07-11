@@ -14,7 +14,7 @@ const getBackendUrl = () => {
   ) {
     return `http://${hostname}:5000`;
   }
-  return import.meta.env.VITE_API_URL || 'https://roshjewellery.onrender.com';
+  return import.meta.env.VITE_API_URL || 'https://server.roshfinejewellery.com';
 };
 axios.defaults.baseURL = getBackendUrl();
 axios.defaults.withCredentials = true;
