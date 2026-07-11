@@ -79,9 +79,7 @@ if (isProd) {
 // Configure CORS
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://roshfinejewellery.com",
-  "https://roshjewellery-1.onrender.com",
-  "https://roshjewellery.onrender.com"
+  "https://roshfinejewellery.com"
 ];
 if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL);
