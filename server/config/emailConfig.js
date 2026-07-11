@@ -3,18 +3,16 @@ const nodemailer = require('nodemailer');
 
 // Create a single transporter instance
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || 'roshfinejewellery@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'hyud cjri xqlm hpji',
+    user: "krushangrangoonwala@gmail.com",
+    pass: "kslusctiletzlcfk",
   },
   tls: {
     rejectUnauthorized: false
   },
-  debug: true, // Enable debug logging
-  logger: true // Enable logger
+  debug: true,
+  logger: true
 });
 
 // Verify transporter configuration
