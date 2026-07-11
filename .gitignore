@@ -25,6 +25,7 @@ dist-ssr/
 
 # OS Metadata
 *.zip
+server_temp/
 .DS_Store
 Thumbs.db
 __MACOSX/
