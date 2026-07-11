@@ -19,11 +19,12 @@ dist-ssr/
 
 # Environment Variables
 .env
-.env*.local
+.env*
 **/.env
-**/.env*.local
+**/.env*
 
 # OS Metadata
+*.zip
 .DS_Store
 Thumbs.db
 __MACOSX/
