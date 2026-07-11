@@ -444,7 +444,7 @@ function ShoppingCheckout() {
         },
   
         prefill: {
-          name: user?.name || guestShippingAddress?.name || "Guest User",
+          name: user?.userName || guestShippingAddress?.name || "Guest User",
           email: user?.email || guestShippingAddress?.email || "guest@example.com",
           contact: user ? shippingAddress?.phone : guestShippingAddress?.phone,
         },
@@ -620,7 +620,7 @@ function ShoppingCheckout() {
           },
           body: JSON.stringify({
             email: user?.email || guestShippingAddress.email,
-            name: user?.name || guestShippingAddress.name,
+            name: user?.userName || guestShippingAddress?.name || "Guest User",
             orderNumber: data?.payload?.orderId,
             totalAmount: totalCartAmount + shippingCharges,
             paymentMethod: "cod",
@@ -971,7 +971,7 @@ function ShoppingCheckout() {
       // Send confirmation email for COD orders
       if (formData.paymentMethod === 'cod') {
         try {
-          const emailResponse = await fetch('/api/send-order-confirmation', {
+          const emailResponse = await fetch('/api/email/send-order-confirmation', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
