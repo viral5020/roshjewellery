@@ -318,7 +318,7 @@ function ShoppingCheckout() {
     try {
       // Configure Razorpay payment options
       const options = {
-        key: 'rzp_test_GIlOKSWDgEOf6H',
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amountInPaise,
         currency: "INR",
         name: "Viral AJudia",
