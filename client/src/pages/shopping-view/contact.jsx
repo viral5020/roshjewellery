@@ -34,15 +34,6 @@ const ContactUs = () => {
             className="flex flex-col space-y-12"
           >
             <div>
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-medium mb-4 opacity-50">Address</h3>
-              <p className="font-serif text-xl md:text-2xl leading-relaxed text-rosh-primary/90">
-                Rosh Fine Jewellery,<br />
-                C - 4/5, Dev Nagar, Tonk Road,<br />
-                Jaipur, Rajasthan 302018
-              </p>
-            </div>
-            
-            <div>
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-medium mb-4 opacity-50">Hours</h3>
               <p className="font-serif text-xl md:text-2xl leading-relaxed text-rosh-primary/90">
                 Monday–Saturday<br />
@@ -53,8 +44,8 @@ const ContactUs = () => {
             <div>
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-medium mb-4 opacity-50">Contact</h3>
               <div className="flex flex-col space-y-2 font-serif text-xl md:text-2xl text-rosh-primary/90">
-                <a href="tel:+919001869762" className="hover:text-rosh-accent transition-colors duration-300 w-fit">+91 9001869762</a>
-                <a href="mailto:contact@rosh.com" className="hover:text-rosh-accent transition-colors duration-300 w-fit">contact@rosh.com</a>
+                <a href="tel:+917208200828" className="hover:text-rosh-accent transition-colors duration-300 w-fit">+91 7208200828</a>
+                <a href="mailto:roshfinejewellery09@gmail.com" className="hover:text-rosh-accent transition-colors duration-300 w-fit">roshfinejewellery09@gmail.com</a>
               </div>
             </div>
           </motion.div>
