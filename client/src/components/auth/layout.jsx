@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-
+import roshLogo from "../../assets/Lockup - White Bckg.svg";
 function AuthLayout() {
   return (
     <div className="flex min-h-screen w-full bg-rosh-background font-sans">
@@ -41,12 +41,7 @@ function AuthLayout() {
         <div className="w-full max-w-md space-y-8 bg-white/40 backdrop-blur-sm border border-rosh-primary/5 p-8 md:p-12 shadow-sm rounded-none">
           <div className="flex flex-col items-center mb-8 lg:hidden">
             {/* Small mobile logo display */}
-            <span className="font-serif text-3xl tracking-[0.2em] text-rosh-primary uppercase italic">
-              Rosh
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-rosh-primary/60 block mt-1">
-              Fine Jewellery
-            </span>
+            <img src={roshLogo} alt="Rosh Fine Jewellery" className="h-10 w-auto scale-[2]" />
           </div>
           <Outlet />
         </div>

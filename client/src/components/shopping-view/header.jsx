@@ -23,8 +23,8 @@ const luxuryNavLinks = [
   { id: 'Men', label: 'Men', path: '/shop/Men' },
   { id: 'Women', label: 'Women', path: '/shop/Women' },
   { id: 'collections', label: 'Collections', path: '/shop/listing' },
-  { id: 'about', label: 'About Us', path: '/shop/home#about' }, 
-  { id: 'custom', label: 'Custom', path: '/shop/custom' }, 
+  { id: 'about', label: 'About Us', path: '/shop/home#about' },
+  { id: 'custom', label: 'Custom', path: '/shop/custom' },
 ];
 
 function ShoppingHeader() {
@@ -32,16 +32,16 @@ function ShoppingHeader() {
   const exchangeRates = useSelector(selectExchangeRates);
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
-  
+
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchCartItems(user?.id));
-    
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -79,7 +79,7 @@ function ShoppingHeader() {
       navigate(menuItem.path);
       return;
     }
-    
+
     sessionStorage.removeItem("filters");
     navigate(menuItem.path);
   }
@@ -88,15 +88,14 @@ function ShoppingHeader() {
     <header className="sticky top-0 z-50 w-full flex flex-col">
 
       {/* Main Navigation */}
-      <div 
-        className={`w-full transition-all duration-500 border-b border-rosh-primary/10 ${
-          isScrolled 
-            ? "bg-rosh-background" 
+      <div
+        className={`w-full transition-all duration-500 border-b border-rosh-primary/10 ${isScrolled
+            ? "bg-rosh-background"
             : "bg-rosh-background/90 backdrop-blur-md"
-        }`}
+          }`}
       >
         <div className="flex h-16 md:h-20 items-center justify-between px-4 lg:px-12 max-w-[1600px] mx-auto w-full">
-          
+
           {/* LEFT: Hamburger (Mobile) & Logo (Desktop) */}
           <div className="flex flex-1 items-center justify-start">
             <div className="lg:hidden flex items-center">
@@ -111,9 +110,9 @@ function ShoppingHeader() {
                   <div className="flex flex-col h-full py-8 px-6">
                     {/* Mobile Logo inside Drawer */}
                     <div className="mb-12 flex flex-col items-center">
-                       <img src={roshLogo} alt="Rosh Fine Jewellery" className="h-10 w-auto scale-[2]" />
+                      <img src={roshLogo} alt="Rosh Fine Jewellery" className="h-10 w-auto scale-[2]" />
                     </div>
-                    
+
                     <nav className="flex flex-col gap-6 font-sans font-medium tracking-widest text-sm uppercase">
                       {luxuryNavLinks.map((menuItem) => (
                         <SheetClose asChild key={menuItem.id}>
@@ -184,7 +183,7 @@ function ShoppingHeader() {
                 </SheetContent>
               </Sheet>
             </div>
-            
+
             {/* Desktop Logo */}
             <Link to="/shop/home" className="hidden lg:flex items-center">
               <img src={roshLogo} alt="Rosh Fine Jewellery" className="h-[46px] w-auto scale-[2.5] origin-left" />
@@ -235,7 +234,7 @@ function ShoppingHeader() {
               <Search className="w-5 h-5 md:w-6 md:h-6" strokeWidth={1.5} />
               <span className="sr-only">Search</span>
             </button>
-            
+
             <button onClick={() => navigate('/shop/wishlist')} className="hover:text-rosh-accent transition-colors p-1">
               <Heart className="w-5 h-5 md:w-6 md:h-6" strokeWidth={1.5} />
               <span className="sr-only">Wishlist</span>
@@ -287,7 +286,7 @@ function ShoppingHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <button 
+              <button
                 onClick={() => navigate("/auth/login")}
                 className="hover:text-rosh-accent transition-colors text-[10px] uppercase font-sans font-medium tracking-[0.2em] ml-2 border border-rosh-primary/10 px-3 py-1.5 hover:border-rosh-primary bg-transparent"
               >
