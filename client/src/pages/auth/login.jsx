@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import img from "../../assets/goog.png";
+import { Eye, EyeOff } from "lucide-react";
 
 const initialState = {
   email: "",
@@ -24,6 +25,7 @@ const loginwithgoogle = () => {
 
 function AuthLogin() {
   const [formData, setFormData] = useState(initialState);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -88,15 +90,24 @@ function AuthLogin() {
                 Forgot?
               </Link>
             </div>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="border-0 border-b border-rosh-primary/20 rounded-none px-0 py-3 focus:outline-none focus:ring-0 outline-none bg-transparent text-sm shadow-none placeholder:text-rosh-primary/30 transition-colors focus:border-rosh-primary"
-              required
-            />
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full border-0 border-b border-rosh-primary/20 rounded-none px-0 py-3 pr-10 focus:outline-none focus:ring-0 outline-none bg-transparent text-sm shadow-none placeholder:text-rosh-primary/30 transition-colors focus:border-rosh-primary"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-rosh-primary/50 hover:text-rosh-primary transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </div>
 
