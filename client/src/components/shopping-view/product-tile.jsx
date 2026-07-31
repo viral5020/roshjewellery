@@ -60,6 +60,14 @@ function ShoppingProductTile({
   };
   const requiresSize = !!getCategoryNameStr();
 
+  const enforceHttps = (url) => {
+    if (!url) return url;
+    if (typeof url === 'string' && url.startsWith('http://')) {
+      return url.replace('http://', 'https://');
+    }
+    return url;
+  };
+
   return (
     <div className="w-full max-w-sm mx-auto group">
       <div 
@@ -67,7 +75,7 @@ function ShoppingProductTile({
         className="relative aspect-[4/5] overflow-hidden mb-4 cursor-pointer bg-rosh-primary/5"
       >
         <img
-          src={product?.image}
+          src={enforceHttps(product?.image)}
           alt={product?.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

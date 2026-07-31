@@ -17,6 +17,7 @@ import {
   getOrderDetailsForAdmin,
   resetOrderDetails,
   updateOrderStatus,
+  deleteOrderForAdmin,
 } from "@/store/admin/order-slice";
 import { Badge } from "../ui/badge";
 import { Checkbox } from "../ui/checkbox";
@@ -36,6 +37,19 @@ function AdminOrdersView() {
 
   function handleFetchOrderDetails(getId) {
     dispatch(getOrderDetailsForAdmin(getId));
+  }
+
+  function handleDeleteOrder(getId) {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      dispatch(deleteOrderForAdmin(getId)).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(getAllOrdersForAdmin());
+          toast({
+            title: "Order deleted successfully",
+          });
+        }
+      });
+    }
   }
 
   useEffect(() => {
@@ -157,8 +171,8 @@ function AdminOrdersView() {
         index + 1,
         item.title,
         item.quantity,
-        `$${item.price}`,
-        `$${(item.quantity * item.price).toFixed(2)}`
+        `₹${item.price}`,
+        `₹${(item.quantity * item.price).toFixed(2)}`
       ]);
 
       autoTable(doc, {
@@ -292,7 +306,7 @@ function AdminOrdersView() {
                         {orderItem?.orderStatus}
                       </Badge>
                     </TableCell>
-                    <TableCell>${orderItem?.totalWithShipping}</TableCell>
+                    <TableCell>₹{orderItem?.totalWithShipping}</TableCell>
                     <TableCell>
                       <Dialog
                         open={openDetailsDialog}
@@ -310,6 +324,13 @@ function AdminOrdersView() {
                         </Button>
                         <AdminOrderDetailsView orderDetails={orderDetails} />
                       </Dialog>
+                      <Button
+                        variant="destructive"
+                        className="ml-2"
+                        onClick={() => handleDeleteOrder(orderItem?._id)}
+                      >
+                        Delete
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))

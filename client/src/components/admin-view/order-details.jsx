@@ -110,7 +110,7 @@ function AdminOrderDetailsView({ orderDetails }) {
     yOffset += 10;
     doc.text(`Coupon Code: ${orderDetails?.couponCode || 'N/A'}`, 14, yOffset);
     yOffset += 10;
-    doc.text(`Discount: $${orderDetails?.discount || 0}`, 14, yOffset);
+    doc.text(`Discount: ₹${orderDetails?.discount || 0}`, 14, yOffset);
     yOffset += 10;
     doc.text(`Free Shipping: ${orderDetails?.freeShipping ? 'Yes' : 'No'}`, 14, yOffset);
     yOffset += 10;

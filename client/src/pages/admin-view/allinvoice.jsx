@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField } from '@mui/material';
-import { FileDownload, WhatsApp, Email } from '@mui/icons-material';
+import { FileDownload, WhatsApp, Email, Delete } from '@mui/icons-material';
 import jsPDF from 'jspdf';
 import Barcode from 'react-barcode'; // Import the barcode component
 
@@ -30,6 +30,24 @@ const AllInvoicesPage = () => {
 
     fetchInvoices();
   }, []);
+
+  const handleDeleteInvoice = async (invoiceId) => {
+    if (window.confirm("Are you sure you want to delete this invoice?")) {
+      try {
+        const response = await fetch(`/api/admin/invoices/${invoiceId}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          setInvoices(invoices.filter((inv) => inv._id !== invoiceId));
+        } else {
+          alert('Failed to delete invoice');
+        }
+      } catch (error) {
+        console.error('Error deleting invoice:', error);
+        alert('Error deleting invoice');
+      }
+    }
+  };
 
   // Handle search query change
   const handleSearchChange = (e) => {
@@ -89,8 +107,8 @@ const AllInvoicesPage = () => {
     invoice.items.forEach((item) => {
       doc.text(item.description, x, yPosition);
       doc.text(`${item.quantity}`, 110, yPosition);
-      doc.text(`$${item.price}`, 140, yPosition);
-      doc.text(`$${item.amount}`, 170, yPosition);
+      doc.text(`₹${item.price}`, 140, yPosition);
+      doc.text(`₹${item.amount}`, 170, yPosition);
       yPosition += 6; // Move down after each item
     });
 
@@ -100,15 +118,15 @@ const AllInvoicesPage = () => {
     yPosition += 10; // Add space after the line
 
     // Totals Section
-    doc.text(`Subtotal: $${invoice.subtotal}`, x, yPosition);
+    doc.text(`Subtotal: ₹${invoice.subtotal}`, x, yPosition);
     yPosition += 6;
-    doc.text(`Tax (${invoice.taxRate}%): $${invoice.taxAmount}`, x, yPosition);
+    doc.text(`Tax (${invoice.taxRate}%): ₹${invoice.taxAmount}`, x, yPosition);
     yPosition += 6;
-    doc.text(`Total: $${invoice.totalAmount}`, x, yPosition);
+    doc.text(`Total: ₹${invoice.totalAmount}`, x, yPosition);
     yPosition += 6;
-    doc.text(`Amount Paid: $${invoice.amountPaid}`, x, yPosition);
+    doc.text(`Amount Paid: ₹${invoice.amountPaid}`, x, yPosition);
     yPosition += 6;
-    doc.text(`Balance Due: $${invoice.balanceDue}`, x, yPosition);
+    doc.text(`Balance Due: ₹${invoice.balanceDue}`, x, yPosition);
 
     // Save the PDF to a Blob
     const pdfBlob = doc.output('blob');
@@ -135,7 +153,7 @@ const AllInvoicesPage = () => {
       Invoice Details:
       Invoice Number: ${invoice.invoiceNumber}
       Client Name: ${invoice.clientName}
-      Total Amount: $${invoice.totalAmount}
+      Total Amount: ₹${invoice.totalAmount}
 
       Thank you!
     `;
@@ -217,7 +235,7 @@ const AllInvoicesPage = () => {
                       <TableCell>{invoice.invoiceNumber}</TableCell>
                       <TableCell>{invoice.clientName}</TableCell>
                       <TableCell>{new Date(invoice.invoiceDate).toLocaleDateString()}</TableCell>
-                      <TableCell>${invoice.totalAmount}</TableCell>
+                      <TableCell>₹{invoice.totalAmount}</TableCell>
                       <TableCell>
                         <Barcode
                           value={invoice.invoiceNumber}
@@ -234,6 +252,9 @@ const AllInvoicesPage = () => {
                         </IconButton>
                         <IconButton className="email-button" onClick={() => shareInvoiceByEmail(invoice)}>
                           <Email />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => handleDeleteInvoice(invoice._id)}>
+                          <Delete />
                         </IconButton>
                       </TableCell>
                     </TableRow>

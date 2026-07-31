@@ -152,8 +152,19 @@ function ShoppingHome() {
 
   const getOptimizedMediaUrl = (url) => {
     if (!url) return url;
+    if (typeof url === 'string' && url.startsWith('http://')) {
+      url = url.replace('http://', 'https://');
+    }
     if (url.includes('cloudinary.com') && url.includes('/upload/')) {
       return url.replace('/upload/', '/upload/q_auto,f_auto/');
+    }
+    return url;
+  };
+
+  const enforceHttps = (url) => {
+    if (!url) return url;
+    if (typeof url === 'string' && url.startsWith('http://')) {
+      return url.replace('http://', 'https://');
     }
     return url;
   };
@@ -333,7 +344,7 @@ function ShoppingHome() {
                 onClick={() => handleNavigateToListingPage('subcategories', cat.label)}
               >
                 <img
-                  src={cat.image}
+                  src={enforceHttps(cat.image)}
                   alt={cat.label}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
                 />
@@ -363,10 +374,10 @@ function ShoppingHome() {
           >
             {aboutUsImages.length > 0 ? (
               aboutUsImages.map((img) => (
-                <img key={img._id} src={img.image} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
+                <img key={img._id} src={enforceHttps(img.image)} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
               ))
             ) : storyImgFallback && (
-              <img src={storyImgFallback} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
+              <img src={enforceHttps(storyImgFallback)} alt="Brand Craftsmanship" className="w-full shrink-0 snap-center h-auto aspect-[4/5] object-cover opacity-90" />
             )}
           </motion.div>
           <motion.div
