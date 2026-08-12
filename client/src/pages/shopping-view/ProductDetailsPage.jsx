@@ -123,7 +123,7 @@ function ProductDetailsPage() {
   const getSizeOptions = () => {
     const category = getCategoryName();
     if (category === "rings") {
-      return Array.from({length: 26}, (_, i) => `${i + 5}mm`);
+      return Array.from({length: 26}, (_, i) => `${i + 5}`);
     } else if (category === "chains") {
       return ["14", "16", "18", "20", "22"].map(s => `${s} inches`);
     } else if (category === "bracelets") {
@@ -478,7 +478,7 @@ function ProductDetailsPage() {
                 <span className="flex items-center gap-1.5"><Truck className="w-3.5 h-3.5" /> Insured Shipping</span>
               </div>
 
-              <p className="text-rosh-primary/80 text-[15px] font-light mb-6 leading-relaxed max-w-xl">
+              <p className="text-rosh-primary/80 text-[15px] font-light mb-6 leading-relaxed max-w-xl whitespace-pre-wrap">
                 {productDetails?.description}
               </p>
 

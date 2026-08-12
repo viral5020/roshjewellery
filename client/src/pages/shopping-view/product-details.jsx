@@ -196,7 +196,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         <div className="">
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
-            <p className="text-muted-foreground text-xl mb-5 mt-4">
+            <p className="text-muted-foreground text-xl mb-5 mt-4 whitespace-pre-wrap">
               {productDetails?.description}
             </p>
           </div>
