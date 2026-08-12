@@ -132,6 +132,13 @@ export const addProductFormElements = [
     placeholder: "Enter product title",
   },
   {
+    label: "Sub Text",
+    name: "subText",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter product sub text",
+  },
+  {
     label: "Description",
     name: "description",
     componentType: "textarea",

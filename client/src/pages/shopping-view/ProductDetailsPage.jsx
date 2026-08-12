@@ -445,6 +445,12 @@ function ProductDetailsPage() {
                 {productDetails?.title}
               </h1>
               
+              {productDetails?.subText && (
+                <p className="text-rosh-primary/70 text-sm md:text-base font-light tracking-wide mb-3">
+                  {productDetails?.subText}
+                </p>
+              )}
+              
               <div className="flex items-end gap-3 mb-2">
                 <span className="text-lg md:text-xl font-sans font-medium tracking-wide">
                   {currency} {convertPrice(productDetails?.price)}
