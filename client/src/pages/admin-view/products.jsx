@@ -29,6 +29,7 @@ const initialFormData = {
   image: null,
   subImages: [],
   title: "",
+  subText: "",
   description: "",
   category: "",
   subcategory: "",
@@ -259,6 +260,7 @@ function AdminProducts() {
         // Set form data with proper structure
         const formattedProduct = {
           title: product.title || "",
+          subText: product.subText || "",
           description: product.description || "",
           category: product.category || "",
           subcategory: product.subcategory || "",
