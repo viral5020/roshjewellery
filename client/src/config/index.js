@@ -348,7 +348,10 @@ async function initializeForm() {
   SubcategoryElement.find(el => el.name === "category").options = categories;
 
   // Update addProduct form elements
-  addProductFormElements[2].options = categories; // Category select
+  const categoryIndex = addProductFormElements.findIndex(el => el.name === 'category');
+  if (categoryIndex !== -1) {
+    addProductFormElements[categoryIndex].options = categories;
+  }
 
   // Update shoppingViewHeaderMenuItems with dynamic categories
   const dynamicCategoryMenuItems = categories.map(cat => ({
