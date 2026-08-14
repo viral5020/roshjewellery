@@ -225,8 +225,8 @@ function AdminProducts() {
         
         // Create a new array to trigger re-render
         const updatedFormElements = [...addProductFormElements];
-        updatedFormElements[2] = {
-          ...updatedFormElements[2],
+        updatedFormElements[3] = {
+          ...updatedFormElements[3],
           options: categoryOptions
         };
         
@@ -309,7 +309,7 @@ function AdminProducts() {
         }));
         setSubcategories(subcategoryOptions);
         // Update the subcategory options in the form
-        addProductFormElements[3].options = subcategoryOptions;
+        addProductFormElements[4].options = subcategoryOptions;
       }
     } catch (error) {
       console.error('Error fetching subcategories:', error);
@@ -611,8 +611,8 @@ function AdminProducts() {
                 
                 // Create a new array to trigger re-render
                 const updatedFormElements = [...addProductFormElements];
-                updatedFormElements[2] = {
-                  ...updatedFormElements[2],
+                updatedFormElements[3] = {
+                  ...updatedFormElements[3],
                   options: categoryOptions
                 };
                 
@@ -786,6 +786,7 @@ function AdminProducts() {
               formData={formData}
               setFormData={setFormData}
               buttonText={currentEditedId ? "Edit" : "Add"}
+              onCategoryChange={handleCategoryChange}
               formControls={addProductFormElements.map(el => {
                 if (el.name === "purity") {
                   if (formData.metalType === "gold") {
