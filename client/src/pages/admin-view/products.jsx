@@ -65,7 +65,7 @@ function AdminProducts() {
   const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
   const [openCreateSubCategoryDialog, setOpenCreateSubCategoryDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState(initialFormData);
   const [categoryFormData, setCategoryFormData] = useState(initialCategoryFormData);
   const [subCategoryFormData, setSubCategoryFormData] = useState(initialSubCategoryFormData);
@@ -106,17 +106,17 @@ function AdminProducts() {
   useEffect(() => {
     if (formData.metalType) {
       const isGold = formData.metalType === "gold";
-      const validColorIds = isGold 
+      const validColorIds = isGold
         ? ["rose-gold", "white-gold", "yellow-gold"]
         : ["silver-polished", "yellow-polished", "rose-gold-polished"];
-        
+
       const currentColors = Array.isArray(formData.colors) ? formData.colors : [];
       const currentImages = Array.isArray(formData.colorImages) ? formData.colorImages : [];
-      
+
       const filteredColors = currentColors.filter(c => validColorIds.includes(c));
       const filteredImages = currentImages.filter(ci => validColorIds.includes(ci.color));
-      
-      if(
+
+      if (
         filteredColors.length !== currentColors.length ||
         filteredImages.length !== currentImages.length
       ) {
@@ -127,7 +127,7 @@ function AdminProducts() {
         }));
       }
     } else {
-      if(
+      if (
         (Array.isArray(formData.colors) && formData.colors.length > 0) ||
         (Array.isArray(formData.colorImages) && formData.colorImages.length > 0)
       ) {
@@ -148,7 +148,7 @@ function AdminProducts() {
     } else if (formData.metalType === "silver") {
       validOptions = ["999", "958", "950", "925", "900", "835", "800"];
     }
-    
+
     if (formData.purity && !validOptions.includes(formData.purity)) {
       setFormData(prev => ({ ...prev, purity: "" }));
     }
@@ -193,7 +193,7 @@ function AdminProducts() {
   const { diamondPricePerCarat } = useSelector((state) => state.metalPrice);
   const dispatch = useDispatch();
   const { toast } = useToast();
-  
+
   // Auto-calculate diamond price based on carats and form's price per carat
   useEffect(() => {
     if (formData.diamondCarat && formData.diamondPerCaratPrice) {
@@ -210,7 +210,7 @@ function AdminProducts() {
       }
     }
   }, [formData.diamondCarat, formData.diamondPerCaratPrice]);
-  
+
 
   // Function to fetch and update category options
   const fetchAndUpdateCategories = async () => {
@@ -222,16 +222,18 @@ function AdminProducts() {
           id: cat._id,
           label: cat.name
         }));
-        
+
         // Create a new array to trigger re-render
         const updatedFormElements = [...addProductFormElements];
-        updatedFormElements[3] = {
-          ...updatedFormElements[3],
-          options: categoryOptions
-        };
-        
-        // Update the form elements
-        addProductFormElements.splice(0, addProductFormElements.length, ...updatedFormElements);
+        const categoryIndex = updatedFormElements.findIndex(el => el.name === 'category');
+        if (categoryIndex !== -1) {
+          updatedFormElements[categoryIndex] = {
+            ...updatedFormElements[categoryIndex],
+            options: categoryOptions
+          };
+          // Update the form elements
+          addProductFormElements.splice(0, addProductFormElements.length, ...updatedFormElements);
+        }
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -256,7 +258,7 @@ function AdminProducts() {
       if (product) {
         // Fetch subcategories for the product's category
         fetchSubcategories(product.category);
-        
+
         // Set form data with proper structure
         const formattedProduct = {
           title: product.title || "",
@@ -282,9 +284,9 @@ function AdminProducts() {
           colorImages: Array.isArray(product.colorImages) ? product.colorImages : [],
           video: product.video || "",
         };
-        
+
         console.log('Setting form data:', formattedProduct); // Debug log
-        
+
         setFormData(formattedProduct);
         setSubImages(Array.isArray(product.subImages) ? product.subImages : []);
         setUploadedImageUrl(product.image || "");
@@ -309,7 +311,10 @@ function AdminProducts() {
         }));
         setSubcategories(subcategoryOptions);
         // Update the subcategory options in the form
-        addProductFormElements[4].options = subcategoryOptions;
+        const subcategoryIndex = addProductFormElements.findIndex(el => el.name === 'subcategory');
+        if (subcategoryIndex !== -1) {
+          addProductFormElements[subcategoryIndex].options = subcategoryOptions;
+        }
       }
     } catch (error) {
       console.error('Error fetching subcategories:', error);
@@ -423,7 +428,7 @@ function AdminProducts() {
 
     // Check if file is CSV
     if (!file.name.endsWith('.csv')) {
-      toast({ 
+      toast({
         title: "Invalid file format",
         description: "Please upload a CSV file"
       });
@@ -442,7 +447,7 @@ function AdminProducts() {
 
         // Validate required fields
         const requiredFields = ['title', 'description', 'category', 'subcategory', 'brand', 'price', 'totalStock'];
-        const invalidRows = jsonData.filter(row => 
+        const invalidRows = jsonData.filter(row =>
           requiredFields.some(field => !row[field])
         );
 
@@ -485,11 +490,11 @@ function AdminProducts() {
           // Convert category name to ID
           const categoryName = product.category.toString().toLowerCase();
           const categoryId = categoryMap[categoryName];
-          
+
           if (!categoryId) {
             throw new Error(`Invalid category: ${product.category}`);
           }
-          
+
           processedProduct.category = categoryId;
 
           // Fetch subcategories for this category
@@ -500,15 +505,15 @@ function AdminProducts() {
           // Find matching subcategory
           const subcategoryName = product.subcategory.toString().toLowerCase();
           const subcategory = subcategories.find(sub => sub.name.toLowerCase() === subcategoryName);
-          
+
           if (!subcategory) {
             throw new Error(`Invalid subcategory: ${product.subcategory} for category: ${product.category}`);
           }
-          
+
           processedProduct.subcategory = subcategory._id;
 
           // Check if product already exists
-          const existingProduct = existingProducts.find(ep => 
+          const existingProduct = existingProducts.find(ep =>
             ep.title.toLowerCase() === processedProduct.title.toLowerCase() &&
             ep.brand.toLowerCase() === processedProduct.brand.toLowerCase() &&
             ep.category.toLowerCase() === categoryName &&
@@ -517,10 +522,10 @@ function AdminProducts() {
 
           if (existingProduct) {
             // Replace stock with the value from CSV
-            return dispatch(editProduct({ 
-              id: existingProduct._id, 
-              formData: { 
-                ...existingProduct, 
+            return dispatch(editProduct({
+              id: existingProduct._id,
+              formData: {
+                ...existingProduct,
                 totalStock: processedProduct.totalStock,
                 price: processedProduct.price,
                 salePrice: processedProduct.salePrice
@@ -537,7 +542,7 @@ function AdminProducts() {
           .then(results => {
             const successCount = results.filter(r => r?.payload?.success).length;
             dispatch(fetchAllProducts());
-            toast({ 
+            toast({
               title: "Upload complete",
               description: `Successfully processed ${successCount} out of ${jsonData.length} products`
             });
@@ -557,7 +562,7 @@ function AdminProducts() {
         });
       }
     };
-    reader.onerror = function() {
+    reader.onerror = function () {
       toast({
         title: "Error reading file",
         description: "Could not read the CSV file"
@@ -608,17 +613,19 @@ function AdminProducts() {
                   id: cat._id,
                   label: cat.name
                 }));
-                
+
                 // Create a new array to trigger re-render
                 const updatedFormElements = [...addProductFormElements];
-                updatedFormElements[3] = {
-                  ...updatedFormElements[3],
-                  options: categoryOptions
-                };
-                
-                // Update the form elements
-                addProductFormElements.splice(0, addProductFormElements.length, ...updatedFormElements);
-                
+                const categoryIndex = updatedFormElements.findIndex(el => el.name === 'category');
+                if (categoryIndex !== -1) {
+                  updatedFormElements[categoryIndex] = {
+                    ...updatedFormElements[categoryIndex],
+                    options: categoryOptions
+                  };
+                  // Update the form elements
+                  addProductFormElements.splice(0, addProductFormElements.length, ...updatedFormElements);
+                }
+
                 // Set the newly created category as selected
                 setFormData(prev => ({
                   ...prev,
@@ -710,9 +717,9 @@ function AdminProducts() {
         <Button onClick={() => setOpenCreateCategoryDialog(true)} className="px-4">
           Create Category
         </Button>
-        <span className="mx-4 border-l border-gray-400 h-6"></span> 
+        <span className="mx-4 border-l border-gray-400 h-6"></span>
 
-        
+
         <Button onClick={() => setOpenCreateSubCategoryDialog(true)} className="px-4">
           Create SubCategory
         </Button>
@@ -786,7 +793,6 @@ function AdminProducts() {
               formData={formData}
               setFormData={setFormData}
               buttonText={currentEditedId ? "Edit" : "Add"}
-              onCategoryChange={handleCategoryChange}
               formControls={addProductFormElements.map(el => {
                 if (el.name === "purity") {
                   if (formData.metalType === "gold") {
@@ -974,48 +980,48 @@ function AdminProducts() {
 
       {/* 🆕 SubCategory Dialog */}
       <Sheet
-  open={openCreateSubCategoryDialog}
-  onOpenChange={() => {
-    setOpenCreateSubCategoryDialog(false);
-    setSubCategoryFormData(initialSubCategoryFormData);
-    setUploadedSubSizeChartUrl("");
-    setSubSizeChartFile(null);
-  }}
->
-  <SheetContent side="right" className="overflow-auto">
-    <SheetHeader>
-      <SheetTitle>Create New SubCategory</SheetTitle>
-    </SheetHeader>
-    <div className="py-6">
-      {/* Log the subCategoryFormData here to check the values */}
-      {console.log(subCategoryFormData)}
+        open={openCreateSubCategoryDialog}
+        onOpenChange={() => {
+          setOpenCreateSubCategoryDialog(false);
+          setSubCategoryFormData(initialSubCategoryFormData);
+          setUploadedSubSizeChartUrl("");
+          setSubSizeChartFile(null);
+        }}
+      >
+        <SheetContent side="right" className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Create New SubCategory</SheetTitle>
+          </SheetHeader>
+          <div className="py-6">
+            {/* Log the subCategoryFormData here to check the values */}
+            {console.log(subCategoryFormData)}
 
-      <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">Size Chart Image (Optional)</label>
-        <ProductImageUpload
-          imageFile={subSizeChartFile}
-          setImageFile={setSubSizeChartFile}
-          uploadedImageUrl={uploadedSubSizeChartUrl}
-          setUploadedImageUrl={setUploadedSubSizeChartUrl}
-          setImageLoadingState={setSubSizeChartLoading}
-          imageLoadingState={subSizeChartLoading}
-          isEditMode={!!uploadedSubSizeChartUrl}
-          showSubImages={false}
-          label="Size Chart Image"
-        />
-      </div>
+            <div className="mb-4">
+              <label className="text-sm font-medium mb-2 block">Size Chart Image (Optional)</label>
+              <ProductImageUpload
+                imageFile={subSizeChartFile}
+                setImageFile={setSubSizeChartFile}
+                uploadedImageUrl={uploadedSubSizeChartUrl}
+                setUploadedImageUrl={setUploadedSubSizeChartUrl}
+                setImageLoadingState={setSubSizeChartLoading}
+                imageLoadingState={subSizeChartLoading}
+                isEditMode={!!uploadedSubSizeChartUrl}
+                showSubImages={false}
+                label="Size Chart Image"
+              />
+            </div>
 
-      <CommonForm
-        onSubmit={onSubCategorySubmit}
-        formData={subCategoryFormData}
-        setFormData={setSubCategoryFormData}
-        buttonText="Add SubCategory"
-        formControls={SubcategoryElement}
-        isBtnDisabled={isSubmitting}
-      />
-    </div>
-  </SheetContent>
-</Sheet>
+            <CommonForm
+              onSubmit={onSubCategorySubmit}
+              formData={subCategoryFormData}
+              setFormData={setSubCategoryFormData}
+              buttonText="Add SubCategory"
+              formControls={SubcategoryElement}
+              isBtnDisabled={isSubmitting}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
 
     </Fragment>
   );
